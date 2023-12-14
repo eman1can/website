@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/website/static/css/main.b4b74f65.css",
-    "main.js": "/website/static/js/main.d8bb60b2.js",
+    "main.js": "/website/static/js/main.ed3a5e78.js",
     "static/media/ethan-wolfe.jpg": "/website/static/media/ethan-wolfe.626999e7636a5f180552.jpg",
     "static/media/Akkurat-Mono.ttf": "/website/static/media/Akkurat-Mono.e33e6379a2f048e2b663.ttf",
     "static/media/rip.svg": "/website/static/media/rip.97f163c135fde1663e55.svg",
     "index.html": "/website/index.html",
     "main.b4b74f65.css.map": "/website/static/css/main.b4b74f65.css.map",
-    "main.d8bb60b2.js.map": "/website/static/js/main.d8bb60b2.js.map"
+    "main.ed3a5e78.js.map": "/website/static/js/main.ed3a5e78.js.map"
   },
   "entrypoints": [
     "static/css/main.b4b74f65.css",
-    "static/js/main.d8bb60b2.js"
+    "static/js/main.ed3a5e78.js"
   ]
 }
