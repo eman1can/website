@@ -1,18 +1,18 @@
 {
   "files": {
-    "main.css": "/static/css/main.64719421.css",
-    "main.js": "/static/js/main.e7e307d6.js",
-    "static/media/ethan-wolfe.jpg": "/static/media/ethan-wolfe.626999e7636a5f180552.jpg",
-    "static/media/connectivity.png": "/static/media/connectivity.b54ad57405273e12aa6f.png",
-    "static/media/doorbells.jpg": "/static/media/doorbells.6527456b544b805a4872.jpg",
-    "static/media/Akkurat-Mono.ttf": "/static/media/Akkurat-Mono.e33e6379a2f048e2b663.ttf",
-    "static/media/rip.svg": "/static/media/rip.97f163c135fde1663e55.svg",
-    "index.html": "/index.html",
-    "main.64719421.css.map": "/static/css/main.64719421.css.map",
-    "main.e7e307d6.js.map": "/static/js/main.e7e307d6.js.map"
+    "main.css": "/website/static/css/main.c7bc72fc.css",
+    "main.js": "/website/static/js/main.1b2e0513.js",
+    "static/media/ethan-wolfe.jpg": "/website/static/media/ethan-wolfe.626999e7636a5f180552.jpg",
+    "static/media/connectivity.png": "/website/static/media/connectivity.b54ad57405273e12aa6f.png",
+    "static/media/doorbells.jpg": "/website/static/media/doorbells.6527456b544b805a4872.jpg",
+    "static/media/Akkurat-Mono.ttf": "/website/static/media/Akkurat-Mono.e33e6379a2f048e2b663.ttf",
+    "static/media/rip.svg": "/website/static/media/rip.97f163c135fde1663e55.svg",
+    "index.html": "/website/index.html",
+    "main.c7bc72fc.css.map": "/website/static/css/main.c7bc72fc.css.map",
+    "main.1b2e0513.js.map": "/website/static/js/main.1b2e0513.js.map"
   },
   "entrypoints": [
-    "static/css/main.64719421.css",
-    "static/js/main.e7e307d6.js"
+    "static/css/main.c7bc72fc.css",
+    "static/js/main.1b2e0513.js"
   ]
 }
