@@ -1,18 +1,38 @@
 {
   "name": "website",
   "version": "0.1.0",
+  "homepage": "https://ethan-wolfe.com",
   "private": true,
+  "files": [
+    "public/assets/home/ethan-wolfe.jpg",
+    "public/assets/home/rip.svg",
+    "public/assets/blog/sensor-networks/connectivity.png",
+    "public/assets/blog/sensor-networks/doorbells.jpg",
+    "public/assets/blog/sensor-networks/mesh_networks.png",
+    "public/assets/blog/sensor-networks/star_of_stars_networks.jpg"
+  ],
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "@tsparticles/react": "^3.0.0",
     "@types/jest": "^27.5.2",
     "@types/node": "^16.18.68",
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.17",
+    "antd": "^4.24.15",
+    "axios": "^1.6.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-particles": "^2.12.2",
+    "react-popper": "^2.3.0",
+    "react-router": "^6.21.0",
+    "react-router-dom": "^6.21.0",
     "react-scripts": "5.0.1",
+    "react-tsparticles": "^2.12.2",
+    "sass": "^1.69.5",
+    "tsparticles": "^3.0.2",
+    "tsparticles-slim": "^2.12.0",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
@@ -20,7 +40,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -39,5 +61,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "gh-pages": "^6.1.0"
   }
 }
