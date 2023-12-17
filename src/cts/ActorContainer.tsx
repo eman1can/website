@@ -1,6 +1,6 @@
 import React, {KeyboardEvent, useState} from "react";
 import find from "../utils";
-import {getProfileImage, searchActor} from "./api";
+import {getHeadshot, getProfileImage, searchActor} from "./api";
 
 type Actor = {
     id: number,
@@ -13,19 +13,25 @@ type SearchInputProps = {
     placeholder?: string,
     onSubmit: (() => void),
     changeSelected: ((value: number) => void),
-    onValue: ((event: React.FormEvent<HTMLInputElement>) => void),
+    onValue: ((value: string) => void),
 }
 
 function SearchInput(props: SearchInputProps) {
+    const [text, setText] = useState('');
+
     const onKey = (event: KeyboardEvent<HTMLInputElement>) => {
         const key = event.key;
 
         if (key === 'Enter')
             props.onSubmit();
-        if (key === 'ArrowUp')
+        else if (key === 'ArrowUp')
             props.changeSelected(-1);
-        if (key === 'ArrowDown')
+        else if (key === 'ArrowDown')
             props.changeSelected(1);
+        else {
+            console.log(event.key, event.keyCode);
+        }
+
         return false;
     }
 
@@ -34,7 +40,12 @@ function SearchInput(props: SearchInputProps) {
         type="text"
         placeholder={props.placeholder}
         onKeyDown={(event) => onKey(event)}
-        onInput={(event) => props.onValue(event)}
+        onInput={(event) => {
+            const value = event.currentTarget.value;
+            props.onValue(value);
+            console.log('Input', event.currentTarget.value);
+        }
+        }
     />;
 }
 
@@ -55,7 +66,7 @@ function ActorSearch(props: ActorSearchProps) {
                             justifyItems: 'flex-start',
                             padding: '5px 5px 5px 30px'
                         }}>
-                    <img alt="Actor" src={actor.id > 0 ? `https://image.tmdb.org/t/p/w100_and_h100_bestv2${actor.image}` : find('assets/cts', `${actor.image}_sq.jpg`)} style={{borderRadius: '25px', width: '50px', 'height': '50px', margin: '0 24px 0 0'}}/>
+                    <img alt="Actor" src={getHeadshot(actor.image)} style={{borderRadius: '25px', width: '50px', 'height': '50px', margin: '0 24px 0 0'}}/>
                     <div style={{flexGrow: 1, textAlign: 'start', fontFamily: 'Akkurat-Mono', fontSize: '16px'}}>{actor.name}</div>
                 </div>);
             })}
@@ -121,15 +132,16 @@ function ActorContainer(props: ActorContainerProps) {
     const [options, setOptions] = useState<Array<Actor> | null>(null);
     const [selected, setSelected] = useState<number>(0);
 
-    function onSearchValue(event: React.FormEvent<HTMLInputElement>) {
-        const value = event.currentTarget.value;
+    function onSearchValue(value: string) {
         if (value.trim() === search) { return; }
 
-        setSearch(value.trim());
+        const s = value.trim();
+        setSearch(s);
 
-        if (search === "") { setOptions(null); return; }
-        if (search) {
-            searchActor(search).then((r: any) => setOptions(filterActors(r, search))).catch((e: any) => { setOptions(null); console.error(e); });
+        if (s === "") { setOptions(null); return; }
+        if (s) {
+            console.log(s);
+            searchActor(s).then((r: any) => setOptions(filterActors(r, s))).catch((e: any) => { setOptions(null); console.error(e); });
         }
     }
 
@@ -151,7 +163,7 @@ function ActorContainer(props: ActorContainerProps) {
 
     return <div className="actor-container">
         {search ? null : <div className="title">{props.title}</div>}
-        {data ? <Background src={data.id > 0 ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${data.image}` : find('assets/cts', `${data.image}.jpg`)}/> : <Background/>}
+        {data ? <Background src={getProfileImage(data.image)}/> : <Background/>}
         {options ? <ActorSearch data={options} selected={selected}/> : null}
         <div style={{flexGrow: 1}}/>
         {data ? <div style={{
