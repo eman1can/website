@@ -1,19 +1,14 @@
 import find from "../utils";
+import { Actor } from "./types";
 
-type Actor = {
-    id: number,
-    name: string,
-    url: string,
-    popularity: number
-}
 
-const ERIC_BAI: Actor = {id: -1, name: 'Amanda Hum', url: find('assets/cts', 'amanda.jpg'), popularity: 0};
-const AMANDA_HUM: Actor = {id: -2, name: 'Amanda Hum', url: find('assets/cts', 'eric.jpg'), popularity: 0};
-const ETHAN_WOLFE: Actor = {id: -3, name: 'Ethan Wolfe', url: find('assets/cts', 'ethan.jpg'), popularity: 0};
+// const ERIC_BAI: Actor = {id: -1, name: 'Amanda Hum', image: find('assets/cts', 'amanda.jpg'), popularity: 0};
+// const AMANDA_HUM: Actor = {id: -2, name: 'Amanda Hum', image: find('assets/cts', 'eric.jpg'), popularity: 0};
+// const ETHAN_WOLFE: Actor = {id: -3, name: 'Ethan Wolfe', image: find('assets/cts', 'ethan.jpg'), popularity: 0};
 
-export const SecretActors: Actor[] = [ERIC_BAI, AMANDA_HUM, ETHAN_WOLFE];
+// export const SecretActors: Actor[] = [ERIC_BAI, AMANDA_HUM, ETHAN_WOLFE];
 
-const ACTOR_IDS: number[] = [
+export const ACTOR_IDS: number[] = [
     31, // Tom Hanks,
     287, // Brad Pitt,
     6193, // Leonardo DiCaprio
@@ -157,7 +152,7 @@ const ACTOR_IDS: number[] = [
 // 69 women
 // 26 non-white
 
-const EXPANDED_ACTOR_IDS: number[] = [
+export const EXPANDED_ACTOR_IDS: number[] = [
     // men
     17142, // Paul Dano
     17276, // Gerard Butler
@@ -269,7 +264,7 @@ const EXPANDED_ACTOR_IDS: number[] = [
 // 51 women
 // 15 non-white
 
-const BOLLYWOOD_ACTOR_IDS: number[] = [
+export const BOLLYWOOD_ACTOR_IDS: number[] = [
     // men
     35070, // Akshay Kumar
     42802, // Salman Khan
@@ -341,7 +336,7 @@ const BOLLYWOOD_ACTOR_IDS: number[] = [
 // 32 men
 // 32 women
 
-const PRE_BLOCKBUSTER_IDS: number[] = [
+export const PRE_BLOCKBUSTER_IDS: number[] = [
     12446, // Peter Sellers
     11147, // John Cassavetes
     8487, // Gregory Peck
@@ -390,7 +385,7 @@ const PRE_BLOCKBUSTER_IDS: number[] = [
     2769 // Natalie Wood
 ];
 
-const Datasets: {[key: string]: number[]} = {
+export const Datasets: {[key: string]: number[]} = {
     default: ACTOR_IDS,
     expanded: EXPANDED_ACTOR_IDS,
     bollywood: BOLLYWOOD_ACTOR_IDS,

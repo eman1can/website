@@ -1,13 +1,14 @@
-import React, {KeyboardEvent, useState} from "react";
-import find from "../utils";
-import {getHeadshot, getProfileImage, searchActor} from "./api";
+import React, { KeyboardEvent, useEffect, useState } from "react";
+import CloseIcon from "../elements/CloseIcon";
+import { CircularProgress } from "@mui/joy";
+import { toTitleCase } from "./utils";
+import { ApiActor, ApiSearchActor } from "./api/api_types";
+import { getHeadshot, getProfileImage, loadProfileImage, searchActor, getActor as apiGetActor } from "./api/tmdb";
+import { filterActors } from "./api/utils";
+import { Actor, Dict } from "./types";
+import { Datasets } from "./datasets";
 
-type Actor = {
-    id: number,
-    name: string,
-    popularity: number,
-    image: string
-};
+
 
 type SearchInputProps = {
     placeholder?: string,
@@ -17,8 +18,6 @@ type SearchInputProps = {
 }
 
 function SearchInput(props: SearchInputProps) {
-    const [text, setText] = useState('');
-
     const onKey = (event: KeyboardEvent<HTMLInputElement>) => {
         const key = event.key;
 
@@ -28,9 +27,6 @@ function SearchInput(props: SearchInputProps) {
             props.changeSelected(-1);
         else if (key === 'ArrowDown')
             props.changeSelected(1);
-        else {
-            console.log(event.key, event.keyCode);
-        }
 
         return false;
     }
@@ -43,105 +39,125 @@ function SearchInput(props: SearchInputProps) {
         onInput={(event) => {
             const value = event.currentTarget.value;
             props.onValue(value);
-            console.log('Input', event.currentTarget.value);
-        }
-        }
+        }}
     />;
 }
 
 type ActorSearchProps = {
     data: Array<Actor> | null,
-    selected: number
+    selected: number,
+    showProfile: boolean
 };
+
 function ActorSearch(props: ActorSearchProps) {
     let index = -1;
     return props.data ? (
         <div style={{display: 'flex', flexDirection: 'column', alignItems: 'stretch', justifyItems: 'flex-start'}}>
             {props.data.map(actor => {
                 index++;
-                return (<div className={`${index === props.selected && 'actor-selected'}`} style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            justifyItems: 'flex-start',
-                            padding: '5px 5px 5px 30px'
-                        }}>
-                    <img alt="Actor" src={getHeadshot(actor.image)} style={{borderRadius: '25px', width: '50px', 'height': '50px', margin: '0 24px 0 0'}}/>
-                    <div style={{flexGrow: 1, textAlign: 'start', fontFamily: 'Akkurat-Mono', fontSize: '16px'}}>{actor.name}</div>
+                return (<div key={actor.id} className={`${index === props.selected && 'actor-selected'}`} style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyItems: 'flex-start',
+                    padding: '5px 5px 5px 30px'
+                }}>
+                    {props.showProfile ? <img
+                        alt="Actor"
+                        src={getHeadshot(actor.profile_path ? actor.profile_path : '')}
+                        style={{
+                            borderRadius: '25px',
+                            width: '50px',
+                            height: '50px',
+                            margin: '0 24px 0 0'
+                        }}/> : null}
+                    <div style={{
+                        flexGrow: 1,
+                        textAlign: 'start',
+                        fontFamily: 'Akkurat-Mono',
+                        fontSize: '16px'
+                    }}>{actor.name}</div>
                 </div>);
             })}
         </div>
     ) : null;
 }
 
-type BackgroundProps = { src?: string };
-function Background({src}: BackgroundProps) {
-    return <div className="background" style={{backgroundImage: `linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0), rgb(0, 0, 0)), url(${src})`}}/>;
+type BackgroundProps = { src?: string, className?: string };
+
+function Background({src, className}: BackgroundProps) {
+    let style = {};
+    if (src)
+        style = {backgroundImage: `linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0), rgb(0, 0, 0)), url(${src})`}
+    return <div className={`${className || "background"}`} style={style}/>;
 }
 
-type ChooseForMeProps = {onClick: (() => void)};
+type ChooseForMeProps = { onClick: (() => void) };
+
 function ChooseForMe(props: ChooseForMeProps) {
     return <button className="choose-for-me" onClick={props.onClick}>Choose For Me</button>;
 }
 
-type ClearActorProps = {onClick: (() => void)};
+type ClearActorProps = { onClick: (() => void) };
+
 function ClearActor(props: ClearActorProps) {
     return <button className="btn clear-actor" onClick={props.onClick}>
-        <span className="icon"><img alt="Close" src={find('assets/cts', 'close_black.svg')}/></span>
+        <span className="icon"><CloseIcon variant="dark"/></span>
         <span>Clear</span>
     </button>;
 }
 
-function getRandomActor(): null {
-    return null;
-}
-
-function filterActors(r: any, query: string): null | Actor[] {
-    const data = r.data;
-
-    const filteredForPhotos = data.results.filter(
-        (star: any) => star.profile_path != null
-    );
-
-    if (query.toLowerCase() === "eric bai") {
-        filteredForPhotos.push({name: "Eric Bai", id: -1, popularity: 0, profile_path: 'eric'});
-    } else if (query.toLowerCase() === "amanda hum") {
-        filteredForPhotos.push({name: "Amanda Hum", id: -2, popularity: 0, profile_path: 'amanda'});
-    } else if (query.toLowerCase() === "ethan wolfe") {
-        filteredForPhotos.push({name: "Ethan Wolfe", id: -3, popularity: 0, profile_path: 'ethan'});
+function getRandomActor(options: Dict<boolean>): Promise<Actor> {
+    let ids: Array<number> = [];
+    for (const key of Object.keys(Datasets)) {
+        if (options[key])
+            ids = ids.concat(Datasets[key]);
     }
 
-    if (filteredForPhotos.length > 0) {
-        return filteredForPhotos.slice(0, 7).map((result: any) => {
-            return {
-                id: result.id,
-                name: result.name,
-                image: `${result.profile_path}`,
-                popularity: result.popularity
-            };
-        });
-    }
-
-    return null;
+    const ix = Math.floor(Math.random() * ids.length);
+    return apiGetActor({id: ids[ix]});
 }
 
-type ActorContainerProps = { title: string }
+
+type ActorContainerProps = {
+    title: string
+    setActor: ((key: string, newActor: Actor | null) => void)
+    actor: Actor | null
+    showProfile: boolean
+    filter: ((r: ApiSearchActor, s: string) => Array<Actor> | null),
+    getOptions: (() => Dict<boolean>)
+}
+
 function ActorContainer(props: ActorContainerProps) {
-    const [data, setData] = useState<Actor | null>(null);
     const [search, setSearch] = useState<string | null>(null);
     const [options, setOptions] = useState<Array<Actor> | null>(null);
     const [selected, setSelected] = useState<number>(0);
+    const [loading, setLoading] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (props.actor) {
+            setLoading(true);
+            loadProfileImage(props.actor?.profile_path ? props.actor?.profile_path : '').then(() => setLoading(false));
+        }
+    }, [props.actor]);
 
     function onSearchValue(value: string) {
-        if (value.trim() === search) { return; }
+        if (value.trim() === search) {
+            return;
+        }
 
         const s = value.trim();
         setSearch(s);
 
-        if (s === "") { setOptions(null); return; }
+        if (s === "") {
+            setOptions(null);
+            return;
+        }
         if (s) {
-            console.log(s);
-            searchActor(s).then((r: any) => setOptions(filterActors(r, s))).catch((e: any) => { setOptions(null); console.error(e); });
+            searchActor(s).then((r: ApiSearchActor) => setOptions(props.filter(r, s))).catch((e: any) => {
+                setOptions(null);
+                console.error(e);
+            });
         }
     }
 
@@ -155,40 +171,70 @@ function ActorContainer(props: ActorContainerProps) {
 
     function onSearchSubmit() {
         if (options) {
-            setData(options[selected]);
+            props.setActor(props.title, options[selected]);
             setOptions(null);
             setSearch(null);
         }
     }
 
+    function setRandomActor() {
+        setLoading(true);
+
+        new Promise(resolve => setTimeout(resolve, 10)).then(() => {
+            getRandomActor(props.getOptions()).then(actor => props.setActor(props.title, actor));
+        });
+    }
+
+    const actor = props.actor;
+
     return <div className="actor-container">
-        {search ? null : <div className="title">{props.title}</div>}
-        {data ? <Background src={getProfileImage(data.image)}/> : <Background/>}
-        {options ? <ActorSearch data={options} selected={selected}/> : null}
-        <div style={{flexGrow: 1}}/>
-        {data ? <div style={{
-            flexShrink: 0,
-            padding: '8px 8px 0 8px',
-            textAlign: 'center',
-            fontFamily: 'Playfair-Display',
-            fontSize: '2em'
-        }}>{data.name}</div> : null}
-        {data ? <div style={{
-            flexShrink: 0,
-            padding: '0 8px 8px 8px',
-            textAlign: 'center',
-            fontFamily: 'Playfair-Display',
-            fontSize: '1.5em',
-            fontVariant: 'small-caps',
-        }}>{`Popularity ${data.popularity}`}</div> : null}
-        {data ? null : <SearchInput
-            placeholder="Enter a movie star's name"
-            onSubmit={onSearchSubmit}
-            onValue={onSearchValue}
-            changeSelected={changeSelected}
-        />}
-        {data ? null : <ChooseForMe onClick={() => setData(getRandomActor())}/>}
-        {data ? <ClearActor onClick={() => setData(null)}/> : null}
+        {search ? null : <div className="title">{toTitleCase(props.title)}</div>}
+        {loading ? (<>
+            <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyItems: 'center',
+                alignContent: 'center',
+                justifyContent: 'center',
+                flexDirection: 'row',
+                flexGrow: 1
+            }}>
+                <CircularProgress
+                    color="neutral"
+                    determinate={false}
+                    size="lg"
+                    variant="soft"
+                />
+            </div>
+        </>) : (<>
+            {actor ? <Background src={getProfileImage(actor.profile_path ? actor.profile_path : '')}/> :
+                <Background className='placeholder'/>}
+            {options ? <ActorSearch data={options} selected={selected} showProfile={props.showProfile}/> : null}
+            <div style={{flexGrow: 1}}/>
+            {actor ? <div style={{
+                flexShrink: 0,
+                padding: '8px 8px 0 8px',
+                textAlign: 'center',
+                fontFamily: 'Playfair-Display',
+                fontSize: '2em'
+            }}>{actor.name}</div> : null}
+            {actor ? <div style={{
+                flexShrink: 0,
+                padding: '0 8px 8px 8px',
+                textAlign: 'center',
+                fontFamily: 'Playfair-Display',
+                fontSize: '1.5em',
+                fontVariant: 'small-caps',
+            }}>{`Popularity ${actor.popularity}`}</div> : null}
+            {actor ? null : <SearchInput
+                placeholder="Enter a movie star's name"
+                onSubmit={onSearchSubmit}
+                onValue={onSearchValue}
+                changeSelected={changeSelected}
+            />}
+            {actor ? null : <ChooseForMe onClick={() => setRandomActor()}/>}
+            {actor ? <ClearActor onClick={() => props.setActor(props.title, null)}/> : null}
+        </>)}
     </div>;
 
 }

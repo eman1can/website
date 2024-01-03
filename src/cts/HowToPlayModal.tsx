@@ -3,6 +3,7 @@ import {Modal} from "antd";
 
 import ModalRow from "./ModalRow";
 import find from "../utils";
+import CloseIcon from "../elements/CloseIcon";
 
 type HowToPlayModalProps = {
     visible: boolean,
@@ -12,7 +13,7 @@ type HowToPlayModalProps = {
 function HowToPlayModal(props: HowToPlayModalProps) {
     return (
         <Modal
-            closeIcon={<img alt="Close" src={find('assets/cts', 'close.svg')} />}
+            closeIcon={<CloseIcon/>}
             open={props.visible}
             onCancel={props.onCancel}
             footer={null}

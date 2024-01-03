@@ -12,14 +12,14 @@ type DynamicButtonProps = {
 function DynamicButton(props: DynamicButtonProps) {
     if (!props.mobile && props.showIcon) {
         return (<Button
-            className="icon-btn btn-on-stars"
+            className="btn-solid"
             onClick={props.onClick}
             icon={props.icon}
         />);
     }
 
     return (<Button
-        className="btn-on-stars"
+        className="btn-solid"
         onClick={props.onClick}
         icon={props.icon}
     >
