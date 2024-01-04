@@ -1,1 +1,929 @@
-{"adult":false,"also_known_as":["Emily Jean Stone","Emily Stone","Riley Stone ","เอมมา สโตน","艾瑪·史東","エマ・ストーン","엠마 스톤","إيما ستون","Έμμα Στόουν","Έμιλι Τζιν Στόουν","艾玛·斯通","Эмма Стоун","اما استون"],"biography":"Emily Jean \"Emma\" Stone is an American actress. The recipient of numerous accolades, including an Academy Award and a Golden Globe Award, she was the world's highest-paid actress in 2017.\n\nBorn and raised in Scottsdale, Arizona, Stone began acting as a child, in a theater production of The Wind in the Willows in 2000. As a teenager, she relocated to Los Angeles with her mother and made her television debut in In Search of the New Partridge Family (2004), a reality show that produced only an unsold pilot. After small television roles, she made her film debut in Superbad (2007), and received positive media attention for her role in Zombieland (2009). The 2010 teen comedy Easy A was Stone's first starring role, earning her nominations for the BAFTA Rising Star Award and a Golden Globe Award for Best Actress.\n\nStone gained wider recognition as Gwen Stacy in the 2012 superhero film The Amazing Spider-Man, and its 2014 sequel. She was nominated for the Academy Award for Best Supporting Actress for playing a recovering drug addict in the black comedy Birdman (2014), and her Broadway debut came in a revival of the musical Cabaret (2014–2015). She won the Academy Award for Best Actress for playing an aspiring actress in the romantic musical La La Land (2016). Stone received a third Academy Award nomination for her portrayal of Abigail Masham in the historical comedy-drama The Favourite (2018).","birthday":"1988-11-06","deathday":null,"gender":1,"homepage":null,"id":54693,"imdb_id":"nm1297015","known_for_department":"Acting","name":"Emma Stone","place_of_birth":"Scottsdale, Arizona, USA","popularity":83.87,"profile_path":"/479f0sax0y2JYnVePMJw3l0yZ1n.jpg"}
+{
+  "page": 1,
+  "results": [
+    {
+      "adult": false,
+      "gender": 0,
+      "id": 2535382,
+      "known_for_department": "Acting",
+      "name": "Emma",
+      "original_name": "Emma",
+      "popularity": 0.6,
+      "profile_path": null,
+      "known_for": [
+        {
+          "adult": false,
+          "backdrop_path": "/aJvn6fVHLdfoEoMWw7IsnsoutIr.jpg",
+          "id": 524738,
+          "title": "May the Devil Take You",
+          "original_language": "id",
+          "original_title": "Sebelum Iblis Menjemput",
+          "overview": "Hoping to find answers to her estranged father's mysterious illness, a young woman visits his old villa and uncovers a horrifying truth from the past.",
+          "poster_path": "/i3UqtKPPWmDX4514kWF8hluCbsk.jpg",
+          "media_type": "movie",
+          "genre_ids": [
+            27,
+            53
+          ],
+          "popularity": 13.307,
+          "release_date": "2018-08-09",
+          "video": false,
+          "vote_average": 6.2,
+          "vote_count": 145
+        },
+        {
+          "adult": false,
+          "backdrop_path": "/6ZhmLwHhzQBb6m9hToDYwOOiUap.jpg",
+          "id": 1086378,
+          "title": "A la porra",
+          "original_language": "es",
+          "original_title": "A la porra",
+          "overview": "",
+          "poster_path": "/o4o2Fn4FVaL8tv8wuUd4KT7QSie.jpg",
+          "media_type": "movie",
+          "genre_ids": [
+            99
+          ],
+          "popularity": 0.6,
+          "release_date": "",
+          "video": false,
+          "vote_average": 10.0,
+          "vote_count": 1
+        }
+      ]
+    },
+    {
+      "adult": false,
+      "gender": 0,
+      "id": 1652895,
+      "known_for_department": "Acting",
+      "name": "Emma",
+      "original_name": "Emma",
+      "popularity": 0.6,
+      "profile_path": null,
+      "known_for": [
+        {
+          "adult": false,
+          "backdrop_path": "/lkI3NYIluOdV0z0jfRa9oWw6fU4.jpg",
+          "id": 26684,
+          "title": "The King Maker",
+          "original_language": "th",
+          "original_title": "กบฏ ท้าวศรีสุดาจัน",
+          "overview": "1547. Fernando de Gama, a young \"Soldier of Fortune\" from Portugal, set sail for the Orient in an effort to find a man who murdered his father and, with luck, like many of their compatriots, to make his fortune. A vicious storm in the Indian Ocean almost ended his plans when he was on the ship sank. The sole survivor, he was washed up on a tropical beach only to be captured by Arab slavers and taken to Ayutthaya in the kingdom of Siam, where he was offered for sale as a slave.",
+          "poster_path": "/apCrFv2DJKvrKHsP2HeKmgIQiG5.jpg",
+          "media_type": "movie",
+          "genre_ids": [
+            28,
+            12,
+            18,
+            10749
+          ],
+          "popularity": 4.039,
+          "release_date": "2005-10-20",
+          "video": false,
+          "vote_average": 4.2,
+          "vote_count": 8
+        }
+      ]
+    },
+    {
+      "adult": false,
+      "gender": 1,
+      "id": 1970714,
+      "known_for_department": "Acting",
+      "name": "Emma",
+      "original_name": "Emma",
+      "popularity": 0.6,
+      "profile_path": "/sj1S9oy5F4ykkIjz3qLwkmZX4Y9.jpg",
+      "known_for": [
+        {
+          "adult": false,
+          "backdrop_path": "/f5445uc1T6HqTe4Zi0hfkk7kuHn.jpg",
+          "id": 31351,
+          "name": "Tout le monde en parle",
+          "original_language": "fr",
+          "original_name": "Tout le monde en parle",
+          "overview": "Host Guy A. Lepage brings together six to eight personalities from different milieus—sports, politics, stage productions and more—that are the subject of everyone’s conversations and/or are important figures in recent events. Participants are invited to speak freely, voicing their opinions on headline news or on a subject that is near and dear to them. ",
+          "poster_path": "/8BiaKzjK3arQM2yKLzB9zBKB6GL.jpg",
+          "media_type": "tv",
+          "genre_ids": [
+            10767
+          ],
+          "popularity": 185.695,
+          "first_air_date": "2004-09-12",
+          "vote_average": 3.9,
+          "vote_count": 8,
+          "origin_country": [
+            "CA"
+          ]
+        },
+        {
+          "adult": false,
+          "backdrop_path": "/fNvtyHFpw5E0zMQ81meSw71sCeL.jpg",
+          "id": 61313,
+          "name": "Deux hommes en or",
+          "original_language": "fr",
+          "original_name": "Deux hommes en or",
+          "overview": "Presented in the form of a large live set, the hosts enlightening interviews with personalities from all walks of life who have made their mark in the news.",
+          "poster_path": "/zfvl0gX1oAjSUIXaXnIm3aNR2Zk.jpg",
+          "media_type": "tv",
+          "genre_ids": [
+            10763,
+            10767,
+            35
+          ],
+          "popularity": 135.101,
+          "first_air_date": "2013-09-13",
+          "vote_average": 0.0,
+          "vote_count": 0,
+          "origin_country": [
+            "CA"
+          ]
+        }
+      ]
+    },
+    {
+      "adult": false,
+      "gender": 0,
+      "id": 1277083,
+      "known_for_department": "Acting",
+      "name": "Emma",
+      "original_name": "Emma",
+      "popularity": 0.6,
+      "profile_path": null,
+      "known_for": [
+        {
+          "adult": false,
+          "backdrop_path": null,
+          "id": 242080,
+          "title": "Take Off to Pattaya",
+          "original_language": "en",
+          "original_title": "Take Off to Pattaya",
+          "overview": "Three flight attendants take off for Pattaya Beach, Thailand for some R\u0026amp;R. How much fun can three single girls have on a weeks' holiday in Asia?",
+          "poster_path": null,
+          "media_type": "movie",
+          "genre_ids": [
+            12,
+            10749
+          ],
+          "popularity": 1.274,
+          "release_date": "2009-03-30",
+          "video": false,
+          "vote_average": 1.0,
+          "vote_count": 1
+        }
+      ]
+    },
+    {
+      "adult": false,
+      "gender": 0,
+      "id": 3700785,
+      "known_for_department": "Acting",
+      "name": "Emma",
+      "original_name": "Emma",
+      "popularity": 0.6,
+      "profile_path": null,
+      "known_for": [
+        {
+          "adult": false,
+          "backdrop_path": null,
+          "id": 655290,
+          "title": "Emma",
+          "original_language": "fr",
+          "original_title": "Emma",
+          "overview": "",
+          "poster_path": "/mHH10S5jJl4YwHfezwjmdZEpviE.jpg",
+          "media_type": "movie",
+          "genre_ids": [
+            99
+          ],
+          "popularity": 0.6,
+          "release_date": "2019-01-01",
+          "video": false,
+          "vote_average": 0.0,
+          "vote_count": 0
+        }
+      ]
+    },
+    {
+      "adult": false,
+      "gender": 0,
+      "id": 3121708,
+      "known_for_department": "Acting",
+      "name": "Emma",
+      "original_name": "Emma",
+      "popularity": 0.6,
+      "profile_path": null,
+      "known_for": []
+    },
+    {
+      "adult": false,
+      "gender": 0,
+      "id": 3121709,
+      "known_for_department": "Editing",
+      "name": "Emma",
+      "original_name": "Emma",
+      "popularity": 0.6,
+      "profile_path": null,
+      "known_for": []
+    },
+    {
+      "adult": false,
+      "gender": 0,
+      "id": 3879273,
+      "known_for_department": "Acting",
+      "name": "Emma",
+      "original_name": "Emma",
+      "popularity": 0.6,
+      "profile_path": null,
+      "known_for": []
+    },
+    {
+      "adult": false,
+      "gender": 0,
+      "id": 3965861,
+      "known_for_department": "Acting",
+      "name": "Emma",
+      "original_name": "Emma",
+      "popularity": 0.6,
+      "profile_path": null,
+      "known_for": [
+        {
+          "adult": false,
+          "backdrop_path": "/haIoJKNVq4aRASaIQbMWgSUrMc1.jpg",
+          "id": 85533,
+          "title": "Whores' Glory",
+          "original_language": "de",
+          "original_title": "Whores' Glory",
+          "overview": "In Bangkok, Thailand, women punch a clock and wait for clients in a brightly lit glass box; in the red-light district of Faridpur, Bangladesh, a madam haggles over the price of a teenage girl; and in the border town of Reynosa, Mexico, crack-addicted women pray to a deity named Lady Death.",
+          "poster_path": "/5MToUaJwsqxcS3JgDa3afL2P0io.jpg",
+          "media_type": "movie",
+          "genre_ids": [
+            99
+          ],
+          "popularity": 5.243,
+          "release_date": "2011-09-09",
+          "video": false,
+          "vote_average": 6.8,
+          "vote_count": 59
+        }
+      ]
+    },
+    {
+      "adult": false,
+      "gender": 1,
+      "id": 3257725,
+      "known_for_department": "Acting",
+      "name": "Emma",
+      "original_name": "Emma",
+      "popularity": 0.6,
+      "profile_path": "/smRDh5m0FfTKD0GU11YAnGnKZMl.jpg",
+      "known_for": [
+        {
+          "adult": false,
+          "backdrop_path": "/cVn92wjNmXhoCMiKHcNZAZUH0xT.jpg",
+          "id": 130347,
+          "name": "Street Woman Fighter",
+          "original_language": "ko",
+          "original_name": "스트릿 우먼 파이터",
+          "overview": "The fierce women armed with stunning street dance take over the stage this summer. The unceasing battles between the real dancers will make you hold your breath. They boast their unique dance styles, skilled performance, and a highly competitive spirit. Eight dance crews get together on the fight stage and compete in the battles. In the fight zone, which crew will be the final winner to take the championship?",
+          "poster_path": "/Ab4b936CodDhtrCs4tFrzEgkfxz.jpg",
+          "media_type": "tv",
+          "genre_ids": [
+            10764
+          ],
+          "popularity": 16.666,
+          "first_air_date": "2021-08-24",
+          "vote_average": 9.4,
+          "vote_count": 5,
+          "origin_country": [
+            "KR"
+          ]
+        },
+        {
+          "adult": false,
+          "backdrop_path": "/s05DOAh7Uj9iysPBU56ml65SbjG.jpg",
+          "id": 155745,
+          "name": "Street Woman Fighter Concerts",
+          "original_language": "ko",
+          "original_name": "스트리트 우먼 파이터 콘서트",
+          "overview": "The eight crews from Street Woman Fighters met their nation-wide fans on tour.",
+          "poster_path": "/mj5OkKIK5gXwGvMy2tLdkAWG7Pz.jpg",
+          "media_type": "tv",
+          "genre_ids": [
+            10764
+          ],
+          "popularity": 3.142,
+          "first_air_date": "2021-11-20",
+          "vote_average": 0.0,
+          "vote_count": 0,
+          "origin_country": [
+            "KR"
+          ]
+        },
+        {
+          "adult": false,
+          "backdrop_path": "/uXFslqGzV7KhA1cKm9ryU4CpUVk.jpg",
+          "id": 214711,
+          "name": "Street Woman Fighter: Gala Talkshow",
+          "original_language": "ko",
+          "original_name": "스트릿 우먼 파이터 갈라 토크쇼",
+          "overview": "A special episode for all the dancers celebrating the end of the long fight in Street Woman Fighter, 47 dancers from eight female crew will come to have fun!",
+          "poster_path": "/6GfD5aCNpRBg5ueuJtvu7DiAnvj.jpg",
+          "media_type": "tv",
+          "genre_ids": [
+            10764,
+            10767
+          ],
+          "popularity": 4.095,
+          "first_air_date": "2021-11-09",
+          "vote_average": 0.0,
+          "vote_count": 0,
+          "origin_country": [
+            "KR"
+          ]
+        }
+      ]
+    },
+    {
+      "adult": false,
+      "gender": 1,
+      "id": 3118979,
+      "known_for_department": "Acting",
+      "name": "Emma",
+      "original_name": "Emma",
+      "popularity": 0.6,
+      "profile_path": "/8d6606EgIGo0pfHGCiJv9V5jny8.jpg",
+      "known_for": [
+        {
+          "adult": false,
+          "backdrop_path": null,
+          "id": 127195,
+          "name": "Humanoid Monster Bella Episode 0",
+          "original_language": "ja",
+          "original_name": "妖怪人間ベラ〜Episode 0〜",
+          "overview": "Ohno Shiori is just an ordinary high school girl. One day, Umenokisaka Bella comes to her class as a transfer student. Bella is given the seat of the recently deceased Sasaki Kozue, a close friend of Shiori's that died in a tragic accident. Shiori notices that Bella has the same kaleidoscope key chain that her and Kozue also owned. Due to her personality, Bella soons becomes a victim of bullying in the classroom but there is something strange about her. What is the truth behind the relationship between Kozue and Bella? What is the truth behind Kozue's accidental death?",
+          "poster_path": "/rMKkgiIyygwZEuxZbDkiuonPu4k.jpg",
+          "media_type": "tv",
+          "genre_ids": [],
+          "popularity": 2.956,
+          "first_air_date": "2020-08-13",
+          "vote_average": 7.5,
+          "vote_count": 2,
+          "origin_country": [
+            "JP"
+          ]
+        },
+        {
+          "adult": false,
+          "backdrop_path": null,
+          "id": 1038909,
+          "title": "Bela: Humanoid Monster",
+          "original_language": "ja",
+          "original_title": "妖怪人間ベラ",
+          "overview": "Kosuke Nitta has been toiling away on a 50th anniversary DVD box set of the classic anime TV series Humanoid Monster BEM. While hunting for a new special feature to attract more buyers, the timid advertising employee finds himself falling into the maw of madness after he discovers the original cut of Bem's final episode. At the same time, a tragedy has left a local high school reeling in the aftermath. What's the connection between these harrowing events? A mysterious girl by the name of Bela.",
+          "poster_path": "/yLNJ79ygsBPEw7sNyxU9XcUg8T2.jpg",
+          "media_type": "movie",
+          "genre_ids": [
+            27
+          ],
+          "popularity": 1.383,
+          "release_date": "2020-09-11",
+          "video": false,
+          "vote_average": 0.0,
+          "vote_count": 0
+        }
+      ]
+    },
+    {
+      "adult": false,
+      "gender": 0,
+      "id": 4317043,
+      "known_for_department": "Acting",
+      "name": "Emma",
+      "original_name": "Emma",
+      "popularity": 0.6,
+      "profile_path": null,
+      "known_for": []
+    },
+    {
+      "adult": false,
+      "gender": 0,
+      "id": 4376331,
+      "known_for_department": "Acting",
+      "name": "Emma",
+      "original_name": "Emma",
+      "popularity": 0.6,
+      "profile_path": null,
+      "known_for": [
+        {
+          "adult": false,
+          "backdrop_path": null,
+          "id": 1205051,
+          "title": "Morgens halb zehn in Deutschland - Wo ist mein Koks",
+          "original_language": "de",
+          "original_title": "Morgens halb zehn in Deutschland - Wo ist mein Koks",
+          "overview": "",
+          "poster_path": null,
+          "media_type": "movie",
+          "genre_ids": [
+            18,
+            53
+          ],
+          "popularity": 0.6,
+          "release_date": "2014-07-10",
+          "video": false,
+          "vote_average": 0.0,
+          "vote_count": 0
+        }
+      ]
+    },
+    {
+      "adult": false,
+      "gender": 0,
+      "id": 4430145,
+      "known_for_department": "Acting",
+      "name": "Emma",
+      "original_name": "Emma",
+      "popularity": 0.6,
+      "profile_path": null,
+      "known_for": [
+        {
+          "adult": false,
+          "backdrop_path": "/9gb5mesKOwZSJyZY4ZvlVKxGvSZ.jpg",
+          "id": 1217777,
+          "title": "MUTANT DOLL",
+          "original_language": "fr",
+          "original_title": "MUTANT DOLL",
+          "overview": "",
+          "poster_path": "/tSQyNnMIwlVgaF9KmbsBzur2bTz.jpg",
+          "media_type": "movie",
+          "genre_ids": [
+            99
+          ],
+          "popularity": 3.449,
+          "release_date": "2023-12-15",
+          "video": false,
+          "vote_average": 0.0,
+          "vote_count": 0
+        }
+      ]
+    },
+    {
+      "adult": false,
+      "gender": 1,
+      "id": 2604515,
+      "known_for_department": "Acting",
+      "name": "Emma Myers",
+      "original_name": "Emma Myers",
+      "popularity": 52.333,
+      "profile_path": "/e5eTDKstLsUKKfmwgiJsDakcvly.jpg",
+      "known_for": [
+        {
+          "adult": false,
+          "backdrop_path": "/iHSwvRVsRyxpX7FE7GbviaDvgGZ.jpg",
+          "id": 119051,
+          "name": "Wednesday",
+          "original_language": "en",
+          "original_name": "Wednesday",
+          "overview": "Wednesday Addams is sent to Nevermore Academy, a bizarre boarding school where she attempts to master her psychic powers, stop a monstrous killing spree of the town citizens, and solve the supernatural mystery that affected her family 25 years ago — all while navigating her new relationships.",
+          "poster_path": "/9PFonBhy4cQy7Jz20NpMygczOkv.jpg",
+          "media_type": "tv",
+          "genre_ids": [
+            10765,
+            9648,
+            35
+          ],
+          "popularity": 438.329,
+          "first_air_date": "2022-11-23",
+          "vote_average": 8.52,
+          "vote_count": 7801,
+          "origin_country": [
+            "US"
+          ]
+        },
+        {
+          "adult": false,
+          "backdrop_path": "/fc2pEZgr0ltmyzLl4cO9JInOg6l.jpg",
+          "id": 798021,
+          "title": "Family Switch",
+          "original_language": "en",
+          "original_title": "Family Switch",
+          "overview": "When the Walker family members switch bodies with each other during a rare planetary alignment, their hilarious journey to find their way back to normal will bring them closer together than they ever thought possible.",
+          "poster_path": "/fnRUCA0fjEb3kuIaTGogL7425IC.jpg",
+          "media_type": "movie",
+          "genre_ids": [
+            35,
+            14,
+            10751
+          ],
+          "popularity": 133.393,
+          "release_date": "2023-11-30",
+          "video": false,
+          "vote_average": 6.392,
+          "vote_count": 333
+        },
+        {
+          "adult": false,
+          "backdrop_path": "/fvUmnxS9xaUUl0eWygvcA1hPdTV.jpg",
+          "id": 801335,
+          "title": "Girl in the Basement",
+          "original_language": "en",
+          "original_title": "Girl in the Basement",
+          "overview": "Sara is a teen girl who is looking forward to her 18th birthday to move away from her controlling father Don. But before she could even blow out the candles, Don imprisons her in the basement of their home.",
+          "poster_path": "/qmddUxRwbsxHa7oEXm4PWh1KZe8.jpg",
+          "media_type": "movie",
+          "genre_ids": [
+            80,
+            53,
+            10770
+          ],
+          "popularity": 42.502,
+          "release_date": "2021-02-27",
+          "video": false,
+          "vote_average": 7.714,
+          "vote_count": 596
+        }
+      ]
+    },
+    {
+      "adult": false,
+      "gender": 1,
+      "id": 54693,
+      "known_for_department": "Acting",
+      "name": "Emma Stone",
+      "original_name": "Emma Stone",
+      "popularity": 72.073,
+      "profile_path": "/3UaYw9KF4fEXRMRWhf25aGJpAW2.jpg",
+      "known_for": [
+        {
+          "adult": false,
+          "backdrop_path": "/6MKr3KgOLmzOP6MSuZERO41Lpkt.jpg",
+          "id": 337404,
+          "title": "Cruella",
+          "original_language": "en",
+          "original_title": "Cruella",
+          "overview": "In 1970s London amidst the punk rock revolution, a young grifter named Estella is determined to make a name for herself with her designs. She befriends a pair of young thieves who appreciate her appetite for mischief, and together they are able to build a life for themselves on the London streets. One day, Estella’s flair for fashion catches the eye of the Baroness von Hellman, a fashion legend who is devastatingly chic and terrifyingly haute. But their relationship sets in motion a course of events and revelations that will cause Estella to embrace her wicked side and become the raucous, fashionable and revenge-bent Cruella.",
+          "poster_path": "/wToO8opxkGwKgSfJ1JK8tGvkG6U.jpg",
+          "media_type": "movie",
+          "genre_ids": [
+            35,
+            80
+          ],
+          "popularity": 79.874,
+          "release_date": "2021-05-26",
+          "video": false,
+          "vote_average": 8.044,
+          "vote_count": 8654
+        },
+        {
+          "adult": false,
+          "backdrop_path": "/uKlthx8XEOOePA6wDi8QecwW33U.jpg",
+          "id": 1930,
+          "title": "The Amazing Spider-Man",
+          "original_language": "en",
+          "original_title": "The Amazing Spider-Man",
+          "overview": "Peter Parker is an outcast high schooler abandoned by his parents as a boy, leaving him to be raised by his Uncle Ben and Aunt May. Like most teenagers, Peter is trying to figure out who he is and how he got to be the person he is today. As Peter discovers a mysterious briefcase that belonged to his father, he begins a quest to understand his parents' disappearance – leading him directly to Oscorp and the lab of Dr. Curt Connors, his father's former partner. As Spider-Man is set on a collision course with Connors' alter ego, The Lizard, Peter will make life-altering choices to use his powers and shape his destiny to become a hero.",
+          "poster_path": "/jIfkQNARYyERqRAq1p1c8xgePp4.jpg",
+          "media_type": "movie",
+          "genre_ids": [
+            28,
+            12,
+            14
+          ],
+          "popularity": 73.241,
+          "release_date": "2012-06-23",
+          "video": false,
+          "vote_average": 6.7,
+          "vote_count": 16530
+        },
+        {
+          "adult": false,
+          "backdrop_path": "/nlPCdZlHtRNcF6C9hzUH4ebmV1w.jpg",
+          "id": 313369,
+          "title": "La La Land",
+          "original_language": "en",
+          "original_title": "La La Land",
+          "overview": "Mia, an aspiring actress, serves lattes to movie stars in between auditions and Sebastian, a jazz musician, scrapes by playing cocktail party gigs in dingy bars, but as success mounts they are faced with decisions that begin to fray the fragile fabric of their love affair, and the dreams they worked so hard to maintain in each other threaten to rip them apart.",
+          "poster_path": "/uDO8zWDhfWwoFdKS4fzkUJt0Rf0.jpg",
+          "media_type": "movie",
+          "genre_ids": [
+            35,
+            18,
+            10749,
+            10402
+          ],
+          "popularity": 47.804,
+          "release_date": "2016-11-29",
+          "video": false,
+          "vote_average": 7.901,
+          "vote_count": 15797
+        }
+      ]
+    },
+    {
+      "adult": false,
+      "gender": 1,
+      "id": 7056,
+      "known_for_department": "Acting",
+      "name": "Emma Thompson",
+      "original_name": "Emma Thompson",
+      "popularity": 44.186,
+      "profile_path": "/zQ0hWHh3tzaOOziPbABQI8s9WCu.jpg",
+      "known_for": [
+        {
+          "adult": false,
+          "backdrop_path": "/6MKr3KgOLmzOP6MSuZERO41Lpkt.jpg",
+          "id": 337404,
+          "title": "Cruella",
+          "original_language": "en",
+          "original_title": "Cruella",
+          "overview": "In 1970s London amidst the punk rock revolution, a young grifter named Estella is determined to make a name for herself with her designs. She befriends a pair of young thieves who appreciate her appetite for mischief, and together they are able to build a life for themselves on the London streets. One day, Estella’s flair for fashion catches the eye of the Baroness von Hellman, a fashion legend who is devastatingly chic and terrifyingly haute. But their relationship sets in motion a course of events and revelations that will cause Estella to embrace her wicked side and become the raucous, fashionable and revenge-bent Cruella.",
+          "poster_path": "/wToO8opxkGwKgSfJ1JK8tGvkG6U.jpg",
+          "media_type": "movie",
+          "genre_ids": [
+            35,
+            80
+          ],
+          "popularity": 79.874,
+          "release_date": "2021-05-26",
+          "video": false,
+          "vote_average": 8.044,
+          "vote_count": 8654
+        },
+        {
+          "adult": false,
+          "backdrop_path": "/esIwzihCKlyqT6AjdI3q6WdSi5u.jpg",
+          "id": 62177,
+          "title": "Brave",
+          "original_language": "en",
+          "original_title": "Brave",
+          "overview": "Brave is set in the mystical Scottish Highlands, where Mérida is the princess of a kingdom ruled by King Fergus and Queen Elinor. An unruly daughter and an accomplished archer, Mérida one day defies a sacred custom of the land and inadvertently brings turmoil to the kingdom. In an attempt to set things right, Mérida seeks out an eccentric old Wise Woman and is granted an ill-fated wish. Also figuring into Mérida’s quest — and serving as comic relief — are the kingdom’s three lords: the enormous Lord MacGuffin, the surly Lord Macintosh, and the disagreeable Lord Dingwall.",
+          "poster_path": "/1XAuDtMWpL0sYSFK0R6EZate2Ux.jpg",
+          "media_type": "movie",
+          "genre_ids": [
+            16,
+            12,
+            35,
+            10751,
+            28,
+            14
+          ],
+          "popularity": 60.603,
+          "release_date": "2012-06-21",
+          "video": false,
+          "vote_average": 7.013,
+          "vote_count": 12721
+        },
+        {
+          "adult": false,
+          "backdrop_path": "/7jyGyVB72hHPLjPQu4hqDGCaraK.jpg",
+          "id": 140823,
+          "title": "Saving Mr. Banks",
+          "original_language": "en",
+          "original_title": "Saving Mr. Banks",
+          "overview": "Author P.L. Travers looks back on her childhood while reluctantly meeting with Walt Disney, who seeks to adapt her Mary Poppins books for the big screen.",
+          "poster_path": "/qfhiVU59BSPCdOZwPNs29Z8S23K.jpg",
+          "media_type": "movie",
+          "genre_ids": [
+            35,
+            18,
+            36
+          ],
+          "popularity": 20.653,
+          "release_date": "2013-11-29",
+          "video": false,
+          "vote_average": 7.357,
+          "vote_count": 3152
+        }
+      ]
+    },
+    {
+      "adult": false,
+      "gender": 1,
+      "id": 2201315,
+      "known_for_department": "Acting",
+      "name": "Emma Mackey",
+      "original_name": "Emma Mackey",
+      "popularity": 34.576,
+      "profile_path": "/9OZBcFSS3Yz0Oqr8mssbQa4suW8.jpg",
+      "known_for": [
+        {
+          "adult": false,
+          "backdrop_path": "/27b1gTpwjZiwGafp8n4XnZRYGEV.jpg",
+          "id": 81356,
+          "name": "Sex Education",
+          "original_language": "en",
+          "original_name": "Sex Education",
+          "overview": "Inexperienced Otis channels his sex therapist mom when he teams up with rebellious Maeve to set up an underground sex therapy clinic at school.",
+          "poster_path": "/4Bph0hhnDH6dpc0SZIV522bLm4P.jpg",
+          "media_type": "tv",
+          "genre_ids": [
+            35,
+            18
+          ],
+          "popularity": 309.971,
+          "first_air_date": "2019-01-11",
+          "vote_average": 8.289,
+          "vote_count": 6844,
+          "origin_country": [
+            "GB"
+          ]
+        },
+        {
+          "adult": false,
+          "backdrop_path": "/nHf61UzkfFno5X1ofIhugCPus2R.jpg",
+          "id": 346698,
+          "title": "Barbie",
+          "original_language": "en",
+          "original_title": "Barbie",
+          "overview": "Barbie and Ken are having the time of their lives in the colorful and seemingly perfect world of Barbie Land. However, when they get a chance to go to the real world, they soon discover the joys and perils of living among humans.",
+          "poster_path": "/iuFNMS8U5cb6xfzi51Dbkovj7vM.jpg",
+          "media_type": "movie",
+          "genre_ids": [
+            35,
+            12,
+            14
+          ],
+          "popularity": 399.4,
+          "release_date": "2023-07-19",
+          "video": false,
+          "vote_average": 7.173,
+          "vote_count": 6406
+        },
+        {
+          "adult": false,
+          "backdrop_path": "/lRbDyjI7HEaXxflFQbYpqHRGFBJ.jpg",
+          "id": 505026,
+          "title": "Death on the Nile",
+          "original_language": "en",
+          "original_title": "Death on the Nile",
+          "overview": "Belgian sleuth Hercule Poirot's Egyptian vacation aboard a glamorous river steamer turns into a terrifying search for a murderer when a picture-perfect couple's idyllic honeymoon is tragically cut short.",
+          "poster_path": "/kVr5zIAFSPRQ57Y1zE7KzmhzdMQ.jpg",
+          "media_type": "movie",
+          "genre_ids": [
+            9648,
+            80,
+            53
+          ],
+          "popularity": 39.097,
+          "release_date": "2022-02-09",
+          "video": false,
+          "vote_average": 6.457,
+          "vote_count": 3213
+        }
+      ]
+    },
+    {
+      "adult": false,
+      "gender": 1,
+      "id": 10990,
+      "known_for_department": "Acting",
+      "name": "Emma Watson",
+      "original_name": "Emma Watson",
+      "popularity": 33.482,
+      "profile_path": "/tvPPRGzAzdQFhlKzLbMO1EpuTJI.jpg",
+      "known_for": [
+        {
+          "adult": false,
+          "backdrop_path": "/m3tdSyl11fhgXPDSEt3aBctTqGP.jpg",
+          "id": 321612,
+          "title": "Beauty and the Beast",
+          "original_language": "en",
+          "original_title": "Beauty and the Beast",
+          "overview": "A live-action adaptation of Disney's version of the classic tale of a cursed prince and a beautiful young woman who helps him break the spell.",
+          "poster_path": "/hKegSKIDep2ewJWPUQD7u0KqFIp.jpg",
+          "media_type": "movie",
+          "genre_ids": [
+            10751,
+            14,
+            10749
+          ],
+          "popularity": 66.082,
+          "release_date": "2017-03-16",
+          "video": false,
+          "vote_average": 6.969,
+          "vote_count": 14973
+        },
+        {
+          "adult": false,
+          "backdrop_path": "/n5A7brJCjejceZmHyujwUTVgQNC.jpg",
+          "id": 12445,
+          "title": "Harry Potter and the Deathly Hallows: Part 2",
+          "original_language": "en",
+          "original_title": "Harry Potter and the Deathly Hallows: Part 2",
+          "overview": "Harry, Ron and Hermione continue their quest to vanquish the evil Voldemort once and for all. Just as things begin to look hopeless for the young wizards, Harry discovers a trio of magical objects that endow him with powers to rival Voldemort's formidable skills.",
+          "poster_path": "/c54HpQmuwXjHq2C9wmoACjxoom3.jpg",
+          "media_type": "movie",
+          "genre_ids": [
+            14,
+            12
+          ],
+          "popularity": 123.327,
+          "release_date": "2011-07-12",
+          "video": false,
+          "vote_average": 8.103,
+          "vote_count": 19458
+        },
+        {
+          "adult": false,
+          "backdrop_path": "/AqLcLsGGTzAjm3pCCq0CZCQrp6m.jpg",
+          "id": 12444,
+          "title": "Harry Potter and the Deathly Hallows: Part 1",
+          "original_language": "en",
+          "original_title": "Harry Potter and the Deathly Hallows: Part 1",
+          "overview": "Harry, Ron and Hermione walk away from their last year at Hogwarts to find and destroy the remaining Horcruxes, putting an end to Voldemort's bid for immortality. But with Harry's beloved Dumbledore dead and Voldemort's unscrupulous Death Eaters on the loose, the world is more dangerous than ever.",
+          "poster_path": "/iGoXIpQb7Pot00EEdwpwPajheZ5.jpg",
+          "media_type": "movie",
+          "genre_ids": [
+            12,
+            14
+          ],
+          "popularity": 118.989,
+          "release_date": "2010-11-17",
+          "video": false,
+          "vote_average": 7.762,
+          "vote_count": 18032
+        }
+      ]
+    },
+    {
+      "adult": false,
+      "gender": 1,
+      "id": 1251069,
+      "known_for_department": "Acting",
+      "name": "Nathalie Emmanuel",
+      "original_name": "Nathalie Emmanuel",
+      "popularity": 31.743,
+      "profile_path": "/koSwmmonFJiZDfwmZgdVA7I1aR.jpg",
+      "known_for": [
+        {
+          "adult": false,
+          "backdrop_path": "/xXHZeb1yhJvnSHPzZDqee0zfMb6.jpg",
+          "id": 385128,
+          "title": "F9",
+          "original_language": "en",
+          "original_title": "F9",
+          "overview": "Dominic Toretto and his crew battle the most skilled assassin and high-performance driver they've ever encountered: his forsaken brother.",
+          "poster_path": "/bOFaAXmWWXC3Rbv4u4uM9ZSzRXP.jpg",
+          "media_type": "movie",
+          "genre_ids": [
+            28,
+            12,
+            80
+          ],
+          "popularity": 56.469,
+          "release_date": "2021-05-19",
+          "video": false,
+          "vote_average": 7.129,
+          "vote_count": 6767
+        },
+        {
+          "adult": false,
+          "backdrop_path": "/jzdnhRhG0dsuYorwvSqPqqnM1cV.jpg",
+          "id": 337339,
+          "title": "The Fate of the Furious",
+          "original_language": "en",
+          "original_title": "The Fate of the Furious",
+          "overview": "When a mysterious woman seduces Dom into the world of crime and a betrayal of those closest to him, the crew face trials that will test them as never before.",
+          "poster_path": "/dImWM7GJqryWJO9LHa3XQ8DD5NH.jpg",
+          "media_type": "movie",
+          "genre_ids": [
+            28,
+            80,
+            53
+          ],
+          "popularity": 64.714,
+          "release_date": "2017-04-12",
+          "video": false,
+          "vote_average": 6.886,
+          "vote_count": 9826
+        },
+        {
+          "adult": false,
+          "backdrop_path": "/mu8RKavbv7Ml48twHQ6XVk7zw8e.jpg",
+          "id": 796499,
+          "title": "Army of Thieves",
+          "original_language": "en",
+          "original_title": "Army of Thieves",
+          "overview": "A mysterious woman recruits bank teller Ludwig Dieter to lead a group of aspiring thieves on a top-secret heist during the early stages of the zombie apocalypse.",
+          "poster_path": "/iPTZGFmPs7HsXHYxiuxGolihjOH.jpg",
+          "media_type": "movie",
+          "genre_ids": [
+            28,
+            53,
+            80,
+            35
+          ],
+          "popularity": 46.795,
+          "release_date": "2021-10-27",
+          "video": false,
+          "vote_average": 6.859,
+          "vote_count": 1797
+        }
+      ]
+    }
+  ],
+  "total_pages": 276,
+  "total_results": 5516
+}

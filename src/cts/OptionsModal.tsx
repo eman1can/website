@@ -3,6 +3,7 @@ import {Row, Col} from "antd";
 import {Switch, Modal} from "antd";
 import ModalRow from "./ModalRow";
 import find from "../utils";
+import CloseIcon from "../elements/CloseIcon";
 
 type OptionsRowProps = {
     style?: object,
@@ -32,73 +33,37 @@ function OptionsRow(props: OptionsRowProps) {
 type OptionsModalProps = {
     onCancel: (() => void),
     visible: boolean,
-    options: {
-        useStandard: boolean,
-        useExpanded: boolean,
-        useBollywood: boolean,
-        useBlockbuster: boolean,
-        blockMovieSeries: boolean,
-        setUseStandard: ((value: boolean) => void),
-        setUseExpanded: ((value: boolean) => void),
-        setUseBollywood: ((value: boolean) => void),
-        setUseBlockbuster: ((value: boolean) => void),
-        setBlockMovieSeries: ((value: boolean) => void),
-    }
+    options: {loc: string, title: string, state: boolean, disabled?: boolean, toggle: ((newValue: boolean) => void)}[]
 }
 
-function OptionsModal(props: OptionsModalProps) {
-    const options = props.options;
-    const numSelected = [
-        options.useStandard,
-        options.useExpanded,
-        options.useBollywood,
-        options.useBlockbuster
-    ].filter(x => x).length;
+function OptionsModal({visible, options, onCancel}: OptionsModalProps) {
+    const sections = ['Gameplay', 'Choose For Me']
     return (
         <Modal
-            closeIcon={<img alt="Close" src={find('assets/cts', 'close.svg')} />}
-            open={props.visible}
-            onCancel={props.onCancel}
+            closeIcon={<CloseIcon/>}
+            open={visible}
+            onCancel={onCancel}
             footer={null}
             centered
             width={550}
         >
             <ModalRow title="Options" />
-            <Col style={{padding: "16px 60px 32px"}}>
-                <OptionsRow
-                    optionText="Cannot use films from a series"
-                    useOption={options.blockMovieSeries}
-                    setUseOption={options.setBlockMovieSeries}
-                />
-                <div style={{marginBottom: 24}} />
-                <p className="modal-subtitle">- Choose For Me -</p>
-                <OptionsRow
-                    optionText="Use default actors"
-                    useOption={options.useStandard}
-                    setUseOption={options.setUseStandard}
-                    disabled={options.useStandard && numSelected === 1}
-                />
-                <OptionsRow
-                    style={{marginTop: 8}}
-                    optionText="Use expanded actors"
-                    useOption={options.useExpanded}
-                    setUseOption={options.setUseExpanded}
-                    disabled={options.useExpanded && numSelected === 1}
-                />
-                <OptionsRow
-                    style={{marginTop: 8}}
-                    optionText="Use Bollywood actors"
-                    useOption={options.useBollywood}
-                    setUseOption={options.setUseBollywood}
-                    disabled={options.useBollywood && numSelected === 1}
-                />
-                <OptionsRow
-                    style={{marginTop: 8}}
-                    optionText="Use pre-blockbuster era actors"
-                    useOption={options.useBlockbuster}
-                    setUseOption={options.setUseBlockbuster}
-                    disabled={options.useBlockbuster && numSelected === 1}
-                />
+            <Col style={{padding: "16px 60px 32px", marginBottom: '-24px'}}>
+                {sections.map(s => {
+                    return (<div key={s} style={{marginBottom: 24}}>
+                        <p className="modal-subtitle">- {s} -</p>
+                        {options.filter(v => v.loc === s)
+                            .map(v => {
+                                return <OptionsRow
+                                    key={v.title}
+                                    optionText={v.title}
+                                    useOption={v.state}
+                                    setUseOption={v.toggle}
+                                    disabled={v.disabled}
+                                />;
+                            })}
+                    </div>);
+                })}
             </Col>
         </Modal>
     );

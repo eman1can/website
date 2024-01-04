@@ -12,30 +12,38 @@
     line-height: normal;
     background: transparent;
     backdrop-filter: blur(10px);
-    border: 1px solid #fff;
-    border-radius: 0px;
     height: 40px;
     padding: 11px 15px 9px;
     opacity: 1;
     color: #fff;
+    border: none;
 }
 
-.btn:focus {
+.btn-solid {
+    border: 1px solid #fff;
+    border-radius: 0px;
+}
+
+.btn-solid:focus {
     border: 1px solid #EDCF73;
 }
 
-.btn::selection {
+.btn-solid::selection {
     border: 1px solid #EDCF73;
 }
 
-.btn:hover {
+.btn-solid:hover {
     border-color: #EDCF73;
     background-color: #EDCF73 !important;
     color: #000;
     transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 
-.btn > .icon+span {
+.btn > .icon + span {
+    margin-left: 8px;
+}
+
+.btn > span + .icon {
     margin-left: 8px;
 }
 
@@ -181,6 +189,9 @@ h1 {
     gap: 5px;
     padding: 5px;
 
+    position: fixed;
+    z-index: 2;
+
     opacity: 0;
     height: 0;
     pointer-events: none;
@@ -213,7 +224,7 @@ h1 {
     height: 540px;
     margin: 25px;
     border: 2px solid #fff;
-    backdrop-filter: blur(14px);
+    backdrop-filter: blur(8px);
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -233,17 +244,29 @@ h1 {
 }
 
 .actor-container .background {
+
     /* <img src="placeholder.svg" style={{width: '180px', height: '180px', top: '144px', margin: '-90px 0 0 -90px', position: 'absolute', left: '50%'}}/> */
-    width: 356px;
-    height: 496px;
+    width: 356px; /* 356 */
+    height: 536px; /* 496 */
     top: 0;
     margin: 0 0 0 0;
     z-index: -2;
     pointer-events: none;
     position: absolute;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.placeholder {
     background-image: url('../assets/cts/placeholder.svg');
     background-repeat: no-repeat;
     background-size: cover;
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    top: 40%;
+    left: 50%;
+    margin: -90px 0 0 -90px;
 }
 
 .actor-container > button {
@@ -290,5 +313,20 @@ h1 {
     outline-offset: 0;
 }
 
+.credit-line {
+    font-family: 'Akkurat-Mono', 'serif-regular', serif;
+    line-height: normal;
+    text-transform: uppercase;
+    color: #fff;
+    font-size: 16px;
+}
+
+.credit-link {
+    color: #D4B75C;
+}
+
+.credit-link:hover {
+    color: #EDCF73;
+}
 
 
