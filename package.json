@@ -12,6 +12,9 @@
     "public/assets/blog/sensor-networks/star_of_stars_networks.jpg"
   ],
   "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/joy": "^5.0.0-beta.21",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -22,7 +25,11 @@
     "@types/react-dom": "^18.2.17",
     "antd": "^4.24.15",
     "axios": "^1.6.2",
+    "cytoscape": "3.22.1",
+    "cytoscape-d3-force": "^1.1.4",
+    "d3": "^7.8.5",
     "react": "^18.2.0",
+    "react-cytoscapejs": "^2.0.0",
     "react-dom": "^18.2.0",
     "react-particles": "^2.12.2",
     "react-popper": "^2.3.0",
@@ -31,6 +38,7 @@
     "react-scripts": "5.0.1",
     "react-tsparticles": "^2.12.2",
     "sass": "^1.69.5",
+    "slugify": "^1.6.6",
     "tsparticles": "^3.0.2",
     "tsparticles-slim": "^2.12.0",
     "typescript": "^4.9.5",
@@ -63,6 +71,10 @@
     ]
   },
   "devDependencies": {
+    "@types/cytoscape": "3.19.9",
+    "@types/cytoscape-d3-force": "^1.0.0",
+    "@types/d3": "^7.4.3",
+    "@types/react-cytoscapejs": "^1.2.5",
     "gh-pages": "^6.1.0"
   }
 }

@@ -23,14 +23,13 @@ const Navbar = () => {
 
     return mobile ? (
         <div className="navbar mobile">
-            <div className="black">
+            <div className="navbar-black">
                 <a href="/">Home</a>
                 <div style={{flexGrow: '1'}}/>
                 <Button onClick={onModal} style={{
                     backgroundColor: "transparent",
                     borderWidth: 0,
                     justifySelf: 'flex-end',
-                    padding: '15px 20px',
                 }}>
                     <MenuOutlined style={{color: 'white', fontSize: '1.5em'}}/>
                 </Button>
@@ -58,7 +57,7 @@ const Navbar = () => {
             )}
         </div>
     ) : (
-        <div className="navbar black">
+        <div className="navbar navbar-black">
             <a href="/">Home</a>
             <div style={{flexGrow: 1}}/>
             {pages.map(p => {return pathname.endsWith(p[1]) ? null : (

@@ -9,8 +9,8 @@ import DynamicButton from "../elements/DynamicButton";
 import Lobby from "./Lobby";
 import HowToPlayModal from "./HowToPlayModal";
 import { GameData } from "./types";
-import Game from "./Game";
 import ResumePlayModal from "./ResumePlayModal";
+import Cytoscape from "../cts/Cytoscape";
 
 type HowToPlayButtonProps = {
     mobile: boolean,
@@ -82,7 +82,7 @@ const Home = () => {
                 />) : null
             }
         </>) : (
-            <Game
+            <Cytoscape
                 mobile={mobile}
                 showHowToPlay={showHowToPlay}
                 setShowHowToPlay={setShowHowToPlay}
@@ -90,8 +90,7 @@ const Home = () => {
                 data={gameData}
             />
         )}
-    </>)
-        ;
+    </>);
 }
 
 export default Home;

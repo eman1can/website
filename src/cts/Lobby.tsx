@@ -88,7 +88,7 @@ const Lobby = (props: LobbyProps) => {
         });
 
         setStartVisible(isValid());
-    }, [search, mode, subMode, actors]);
+    }, [search, mode, subMode, actors, isValid, setActor]);
 
     function setGameMode(newMode: string) {
         const params = new URLSearchParams(search);
@@ -167,10 +167,8 @@ const Lobby = (props: LobbyProps) => {
             const actorDict: Dict<Actor> = {};
             const filmDict: Dict<FilmCast> = {};
 
-            const actorMap: Map = {};
             responses.forEach(actor => {
                 actorDict[actor.name] = actor;
-                actorMap[actor.name] = [{id: actor.id, key: actor.name}];
                 actor.credits?.cast.filter(shouldFilterFilm).forEach((f: FilmCast) => {
                     filmDict[f.title] = f;
                 });
@@ -180,10 +178,10 @@ const Lobby = (props: LobbyProps) => {
                 props.setGameData({
                     mode: mode,
                     subMode: subMode,
-                    actors: actorDict,
-                    films: filmDict,
                     filmMap: map,
-                    actorMap: actorMap
+                    found: {actors: actorDict, films: {}},
+                    answers: {actors: {}, films: filmDict},
+                    requires: responses
                 });
             });
         });
@@ -224,10 +222,10 @@ const Lobby = (props: LobbyProps) => {
                 {loc: 'Choose For Me', title: 'Use pre-blockbuster actors', state: useBlockbuster, toggle: setUseBlockbuster, disabled: useBlockbuster && numSelected === 1}
             ]}
         />
-        <div style={{position: "absolute", top: 68, left: 18, zIndex: 2}}>
+        <div style={{position: "absolute", top: 18, left: 18, zIndex: 2}}>
             {props.mobile ? null : <props.HowToPlayButton mobile={false}/>}
         </div>
-        <div style={{position: "absolute", top: 68, right: 18, zIndex: 2}}>
+        <div style={{position: "absolute", top: 18, right: 18, zIndex: 2}}>
             {props.mobile ? null : <OptionsButton mobile={false}/>}
         </div>
         <div style={{

@@ -2,6 +2,9 @@
     background: linear-gradient(#040508, #1d1f34);
     width: 100vw;
     height: 100vh;
+    position: absolute;
+    left: 0;
+    top: 0;
     overflow: hidden;
 }
 
@@ -13,7 +16,7 @@
     background: transparent;
     backdrop-filter: blur(10px);
     height: 40px;
-    padding: 11px 15px 9px;
+    min-width: 40px;
     opacity: 1;
     color: #fff;
     border: none;
@@ -37,6 +40,10 @@
     background-color: #EDCF73 !important;
     color: #000;
     transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+.btn-label {
+    padding: 11px 15px 9px;
 }
 
 .btn > .icon + span {
@@ -329,4 +336,213 @@ h1 {
     color: #EDCF73;
 }
 
+.game-header {
+    height: 100%;
+    white-space: normal;
+    cursor: default;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    text-transform: uppercase;
+    font-size: 14pt;
+}
 
+.game-header-link {
+    color: #D4B75C;
+    text-transform: uppercase;
+}
+
+.game-header-link:hover {
+    color: #EDCF73;
+}
+
+.selected-node-info {
+    border: 1px solid;
+    background: none;
+    backdrop-filter: blur(50px);
+    z-index: 2;
+}
+
+.credit-card {
+    width: 300px;
+    background: #0F1126;
+    margin-top: 20px;
+    margin-left: 16px;
+    margin-right: 16px;
+}
+
+.portrait {
+    text-align: center;
+    width: 100%;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    font-family: PlayfairDisplay-Regular, serif;
+    font-size: 20pt;
+}
+
+.credits-list {
+    padding: 8px;
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+}
+
+.credits-list-container {
+    width: 100%;
+    overflow: auto;
+    max-height: 200px;
+    scrollbar-width: thin;
+    scrollbar-color: #999999 #1D214B;
+}
+
+/* Chrome, Edge and Safari */
+.credits-list-container::-webkit-scrollbar {
+    height: 12px;
+    width: 12px;
+    opacity: 0.2;
+}
+.credits-list-container::-webkit-scrollbar-track {
+    border-radius: 0;
+    background-color: transparent;
+}
+
+.credits-list-container::-webkit-scrollbar-track:hover {
+    background-color: transparent;
+}
+
+.credits-list-container::-webkit-scrollbar-track:active {
+    background-color: transparent;
+}
+
+.credits-list-container::-webkit-scrollbar-thumb {
+    border-radius: 6px;
+    background-color: #999999;
+}
+
+.credits-list-container::-webkit-scrollbar-thumb:hover {
+    background-color: #AAAAAA;
+}
+
+.credits-list-container::-webkit-scrollbar-thumb:active {
+    background-color: #CCCCCC;
+}
+
+.credits-title {
+    text-align: center;
+    padding: 10px 0;
+    font-family: Akkurat-Mono, Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    text-transform: uppercase;
+}
+
+.credits-empty {
+    text-align: center;
+    font-family: Akkurat-Mono, Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+}
+
+.credits-list-item {
+    background: transparent;
+    border: transparent;
+    color: #D4B75C;
+    text-transform: uppercase;
+    text-align: center;
+    font-size: 16px;
+    font-family: Akkurat-Mono, Arial, Helvetica, sans-serif;
+}
+
+.credits-list-item:hover {
+    color: #EDCF73;
+}
+
+.guide-text {
+    position: absolute;
+    bottom: 8px;
+    right: 18px;
+    padding-right: -8px;
+    display: flex;
+    flex-direction: column;
+    z-index: 2;
+}
+
+.board-hint {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: flex-end;
+}
+
+.board-hint-icon {
+    height: 17px;
+    margin-top: 2px;
+}
+
+.board-hint-text {
+    margin-left: 8px;
+    font-family: 'Akkurat-Mono', 'serif-regular', serif;
+    line-height: normal;
+    text-transform: uppercase;
+    font-size: 12pt;
+    margin-bottom: 3pt;
+    margin-top: 3pt;
+    color: white;
+    opacity: 0.5;
+}
+
+footer {
+    justify-self: flex-end;
+    background-color: rgb(48, 51, 72);
+    flex: 0 1 auto;
+    justify-content: space-between;
+    padding: 0 20px;
+}
+
+.stat {
+    flex-grow: 1;
+    min-width: 250px;
+    font-family: 'Akkurat-Mono', 'serif-regular', serif;
+    line-height: normal;
+    text-transform: uppercase;
+    font-size: 12pt;
+    padding: 20px 0;
+    border-top-width: 1px;
+    border-top-color: #ffffff33;
+    border-top-style: dashed;
+}
+
+.guess-input:active {
+    border: none;
+}
+
+.guess-input {
+    font-family: 'Akkurat-Mono', 'serif-regular', serif;
+    line-height: normal;
+    text-transform: uppercase;
+    opacity: 0.5;
+    background-color: transparent;
+    border: 1px solid #303348 !important;
+    width: 100%;
+    color: #fff;
+    border-radius: 0;
+    font-size: 20pt;
+    height: 100%;
+    padding: 20px 10px;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.guess-input:focus, .guess-input:hover {
+    border-color: transparent;
+    background: transparent;
+    border-radius: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.guess-input::selection {
+    border: none;
+}

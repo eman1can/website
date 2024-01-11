@@ -15,7 +15,7 @@ function Button(props: ButtonProps) {
         <button style={props.style} onClick={props.onClick} className={`btn ${props.className}`}>
             <>
                 {props.icon ? (<span className="icon">{props.icon}</span>) : null}
-                <span>{props.children}</span>
+                {props.children ? (<span>{props.children}</span>) : null}
                 {props.iconRight ? (<span className="icon">{props.iconRight}</span>) : null}
             </>
 

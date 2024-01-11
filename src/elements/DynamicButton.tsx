@@ -19,7 +19,7 @@ function DynamicButton(props: DynamicButtonProps) {
     }
 
     return (<Button
-        className="btn-solid"
+        className="btn-solid btn-label"
         onClick={props.onClick}
         icon={props.icon}
     >

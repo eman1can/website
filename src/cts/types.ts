@@ -8,6 +8,13 @@ export type Actor = {
     popularity: number
 }
 
+export type Film = {
+    id: number,
+    title: string,
+    poster_path: string | null,
+    popularity: number
+}
+
 export type Dict<S> = {[key: string]: S};
 
 export type Node = {
@@ -20,10 +27,10 @@ export type Map = Dict<Array<Node>>
 export type GameData = {
     mode: string,
     subMode: string,
-    actors: Dict<Actor>,
-    films: Dict<FilmCast>,
-    actorMap: Map,
-    filmMap: Map
+    found: {actors: Dict<Actor>, films: Dict<Film>},
+    answers: {actors: Dict<Actor>, films: Dict<Film>},
+    filmMap: Map,
+    requires: Array<Actor>
 }
 
 export type HowToPlayButtonProps = {

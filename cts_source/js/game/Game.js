@@ -1204,7 +1204,7 @@ function Game(props) {
 								paddingRight: "-8px"
 							}}
 						>
-							<GuideText />
+							<GuideText/>
 						</div>
 					</div>
 				</div>

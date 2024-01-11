@@ -2,7 +2,7 @@ import axios from 'axios';
 import find from "../utils";
 
 const api_key = '2fd93a6ae014f8a40789924655c0c76d';
-const offline = true;
+const offline = false;
 
 export function searchActor(query: string) {
     if (offline) {
@@ -47,6 +47,8 @@ export function getHeadshot(query: string): string {
 }
 
 export function getProfileImage(query: string): string {
+    if (query === '')
+        return '';
     if (offline) {
         return find('assets/cts/offline/full', query);
     } else {
