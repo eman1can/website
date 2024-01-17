@@ -2,7 +2,7 @@ import React from "react";
 import {Modal} from "antd";
 
 import ModalRow from "./ModalRow";
-import find from "../utils";
+import { find } from "../utils";
 import CloseIcon from "../elements/CloseIcon";
 
 type HowToPlayModalProps = {

@@ -14,7 +14,7 @@ function useLocalStorage<S>(key: string, initialState: S): [S, ((newValue: S) =>
             setValue(JSON.parse(local));
         else
             dispatch(initialState);
-    }, [key, setValue, initialState]);
+    }, [key, setValue, initialState, dispatch]);
 
     return [value, dispatch];
 }

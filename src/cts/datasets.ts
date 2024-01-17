@@ -1,12 +1,12 @@
-import find from "../utils";
-import { Actor } from "./types";
+import { find } from "../utils";
+import { Actor, Film } from "./api/types";
 
+const CONNECT_THE_STARS: Film = {id: 'f0', name: 'Connect The Stars', image: find('assets/cts', 'connect_the_stars.jpg'), popularity: 0};
+const ERIC_BAI: Actor = {id: 'a0', name: 'Amanda Hum', image: find('assets/cts', 'amanda.jpg'), popularity: 0, credits: [CONNECT_THE_STARS]};
+const AMANDA_HUM: Actor = {id: 'a1', name: 'Amanda Hum', image: find('assets/cts', 'eric.jpg'), popularity: 0, credits: [CONNECT_THE_STARS]};
+const ETHAN_WOLFE: Actor = {id: 'a2', name: 'Ethan Wolfe', image: find('assets/cts', 'ethan.jpg'), popularity: 0, credits: [CONNECT_THE_STARS]};
 
-// const ERIC_BAI: Actor = {id: -1, name: 'Amanda Hum', image: find('assets/cts', 'amanda.jpg'), popularity: 0};
-// const AMANDA_HUM: Actor = {id: -2, name: 'Amanda Hum', image: find('assets/cts', 'eric.jpg'), popularity: 0};
-// const ETHAN_WOLFE: Actor = {id: -3, name: 'Ethan Wolfe', image: find('assets/cts', 'ethan.jpg'), popularity: 0};
-
-// export const SecretActors: Actor[] = [ERIC_BAI, AMANDA_HUM, ETHAN_WOLFE];
+export const SecretActors: Actor[] = [ERIC_BAI, AMANDA_HUM, ETHAN_WOLFE];
 
 export const ACTOR_IDS: number[] = [
     31, // Tom Hanks,
@@ -392,13 +392,11 @@ export const Datasets: {[key: string]: number[]} = {
     blockbuster: PRE_BLOCKBUSTER_IDS
 }
 
-export const getDataset = (options: any): number[] => {
+export const getDataset = (options: {[key: string]: any}): number[] => {
     let keys: number[] = [];
-    for (let key in Datasets) {
-        if (Object.hasOwn(options, `use_${key}`)) {
-            if (options[`use_${key}`]) {
-                keys.concat(Datasets[key]);
-            }
+    for (const key of Object.keys(Datasets)) {
+        if (options[`use_${key}`]) {
+            keys = keys.concat(Datasets[key]);
         }
     }
     return keys;

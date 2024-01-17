@@ -1,50 +1,44 @@
 import React from "react";
-import {Modal} from "antd";
 
-import ModalRow from "./ModalRow";
-import find from "../utils";
-import CloseIcon from "../elements/CloseIcon";
+import { getProfileImage } from "./api/tmdb";
+import { GameData } from "./types";
+import RightArrowButton from "../elements/RightArrowButton";
 
-type ResumePlayData = {
-    mode: string,
+function getResumeModal(data: GameData, onSuccess: () => void) {
+    const actorsFound: number = data.found.filter(c => c.startsWith('a')).length;
+    const filmsFound: number = data.found.length - actorsFound;
+    let bestPath: number = -1;
+    if (data.bestPath)
+        bestPath = data.bestPath;
 
+    return (<div className="col" style={{margin: '0px 50px 25px 50px'}}>
+        <div className="playfair modal-title">Found Game in Progress</div>
+        <div className="akkurat modal-heading">- Mode -</div>
+        <div className="akkurat modal-body">{data.mode}</div>
+        <div className="akkurat modal-heading">- Actors -</div>
+        <div className="row center" style={{gap: '20px', flexWrap: 'wrap'}}>
+            {Object.entries(data.requires).map(([key, graphKey]) => {
+                const a = data.pool[graphKey];
+                return (<div key={key} style={{flex: '0 0 30%'}}>
+                    <p className="modal-body akkurat">{key}</p>
+                    <img
+                        alt={a.name}
+                        src={getProfileImage(a.image)}
+                        className="modal-img"
+                    />
+                </div>);
+            })}
+        </div>
+        <div className="akkurat modal-heading">- Stats -</div>
+        <div className="col akkurat modal-body">
+            <div>{`Actors Found: ${actorsFound}`}</div>
+            <div>{`Films Found: ${filmsFound}`}</div>
+            <div>{`Best Path: ${bestPath === -1 ? '???' : bestPath}`}</div>
+        </div>
+        <div className="row center" style={{marginTop: '15px'}}>
+            <RightArrowButton label="Resume" visible={true} onClick={onSuccess}/>
+        </div>
+    </div>);
 }
 
-type ResumePlayModalProps = {
-    data: ResumePlayData
-    visible: boolean,
-    onCancel: (() => void),
-    onSuccess: (() => void)
-}
-
-function ResumePlayModal(props: ResumePlayModalProps) {
-    return (
-        <Modal
-            closeIcon={<CloseIcon/>}
-            open={props.visible}
-            onCancel={props.onCancel}
-            onOk={props.onSuccess}
-            footer={null}
-            centered
-            width={500}
-        >
-            <ModalRow title="Found Game in Progress" />
-            <ModalRow
-                heading="- Mode -"
-                body={props.data.mode}
-            />
-            <ModalRow
-                prefix={<img style={{height: 24}} alt="Goal" src={find('assets/cts', 'how-to-2.svg')} />}
-                heading="- Expand your board -"
-                body="Build new connections by typing the names of movies & stars connected to the ones already in your board."
-            />
-            <ModalRow
-                prefix={<img style={{height: 27}} alt="Goal" src={find('assets/cts', 'how-to-2.svg')} />}
-                heading="- Connect the Stars -"
-                body="Challenge yourself to find the shortest path!"
-            />
-        </Modal>
-    );
-}
-
-export default ResumePlayModal;
+export default getResumeModal;

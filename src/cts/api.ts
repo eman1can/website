@@ -1,5 +1,5 @@
 import axios from 'axios';
-import find from "../utils";
+import { find } from "../utils";
 
 const api_key = '2fd93a6ae014f8a40789924655c0c76d';
 const offline = false;

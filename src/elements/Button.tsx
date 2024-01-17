@@ -1,24 +1,21 @@
 import React from "react";
 
 type ButtonProps = {
+    onClick: (() => void),
     className?: string,
+    scale?: string,
     icon?: React.JSX.Element,
     iconRight?: React.JSX.Element,
-    onClick: (() => void),
     children?: any,
     style?: object
 }
 
-function Button(props: ButtonProps) {
-
+function Button(props: Readonly<ButtonProps>) {
     return (
-        <button style={props.style} onClick={props.onClick} className={`btn ${props.className}`}>
-            <>
-                {props.icon ? (<span className="icon">{props.icon}</span>) : null}
-                {props.children ? (<span>{props.children}</span>) : null}
-                {props.iconRight ? (<span className="icon">{props.iconRight}</span>) : null}
-            </>
-
+        <button style={props.style} onClick={props.onClick} className={`btn akkurat ${props.className ? props.className : ''}${props.scale ? props.scale : ''}`}>
+            {props.icon ? (<span className="icon">{props.icon}</span>) : null}
+            {props.children ? (<span>{props.children}</span>) : null}
+            {props.iconRight ? (<span className="icon">{props.iconRight}</span>) : null}
         </button>
     );
 }

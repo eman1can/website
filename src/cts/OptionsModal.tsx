@@ -2,7 +2,7 @@ import React from "react";
 import {Row, Col} from "antd";
 import {Switch, Modal} from "antd";
 import ModalRow from "./ModalRow";
-import find from "../utils";
+import { find } from "../utils";
 import CloseIcon from "../elements/CloseIcon";
 
 type OptionsRowProps = {

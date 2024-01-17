@@ -16,6 +16,7 @@ const CreditsSection = () => {
             justifyItems: 'center',
         }}>
             <div className="credit-line">
+                {"By "}
                 <a
                     className="credit-link"
                     rel="noopener noreferrer"
@@ -24,7 +25,7 @@ const CreditsSection = () => {
                 >
                     Eric Bai
                 </a>
-                {" and "}
+                {", "}
                 <a
                     className="credit-link"
                     rel="noopener noreferrer"

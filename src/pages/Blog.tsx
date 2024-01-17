@@ -1,6 +1,7 @@
 import {Col, Row, Typography} from "antd";
 import Navbar from "../elements/Navbar";
-import find from "../utils";
+import { find } from "../utils";
+import { PageContentProps } from "./Page";
 
 type InsertProps = {
     src: string;
@@ -20,9 +21,8 @@ const Insert = ({src, alt, caption, anchor, height, width}: InsertProps) => {
 
 const assets: string = 'assets/blog/sensor-networks';
 
-function Blog() {
+function Blog(props: Readonly<PageContentProps>) {
     return (<div>
-        <Navbar/>
         <Col xs={20} md={15} lg={12} xl={12} style={{margin: 'auto', paddingTop: '50px'}}>
             <Row justify="center">
                 <h1 className="title-h1">Sensor Networks</h1>

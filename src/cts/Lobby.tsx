@@ -1,39 +1,40 @@
-import {InfoCircleFilled, SettingFilled, ArrowDownOutlined, ArrowRightOutlined} from "@ant-design/icons";
-import find, { shouldFilterFilm, compileAlternateTitles } from "../utils";
+import {InfoCircleFilled, ArrowDownOutlined} from "@ant-design/icons";
+import { find } from "../utils";
 import OptionsModal from "./OptionsModal";
-import React, {useEffect, useRef, useState} from "react";
-import DynamicButton from "../elements/DynamicButton";
+import React, {useEffect, useState} from "react";
 import useLocalStorage from "./local_storage";
 import Unselectable from '../elements/Unselectable';
 import Button from "../elements/Button";
 import { GameNames, GameTypes, SubTitles } from "./games";
-import ActorContainer from "./ActorContainer";
-import { LobbyProps, HowToPlayButtonProps, Actor } from "./types";
+import Container from "./Container";
+import { GameData, Dict, GameType } from "./types";
+import { Actor, AlternativeTitles, Film } from "./api/types";
 import CreditsSection from "./CreditsSection";
 import CloseIcon from "../elements/CloseIcon";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ApiActor, ApiSearchActor, FilmCast } from "./api/api_types";
-import { getActor as apiGetActor } from "./api/tmdb";
-import { Dict, Map } from './types';
+import { getData as apiGetData, getAlternateTitles as apiGetAlternativeTitles } from "./api/tmdb";
 import { filterActors } from "./api/utils";
+import HowToPlayButton from "../elements/HowToPlayButton";
+import OptionsButton from "../elements/OptionsButton";
+import RightArrowButton from "../elements/RightArrowButton";
+import ResumeButton from "../elements/ResumeButton";
 
 
-const Lobby = (props: LobbyProps) => {
+export type LobbyProps = {
+    scale: string
+    showHowToPlay: boolean
+    setShowHowToPlay: ((newValue: boolean) => void)
+    showResume: boolean
+    setShowResume: ((newValue: boolean) => void)
+    setGameData: ((newData: GameData) => void)
+}
+
+const Lobby = (props: Readonly<LobbyProps>) => {
+    const mobile = props.scale.startsWith('mobile');
+
     const [mobileClosed, setMobileClosed] = useLocalStorage<boolean>('mobile', false);
 
     const [showOptions, setShowOptions] = useState<boolean>(false);
-    const OptionsButton = (props: {
-        mobile: boolean,
-        showIcon?: boolean
-    }) => {
-        return <DynamicButton
-            mobile={props.mobile}
-            showIcon={props.showIcon}
-            icon={<SettingFilled/>}
-            label="Options"
-            onClick={() => setShowOptions(true)}
-        />;
-    }
 
     const { pathname, search } = useLocation();
     const navigate = useNavigate();
@@ -41,8 +42,6 @@ const Lobby = (props: LobbyProps) => {
     const [selectGameMode, setSelectGameMode] = useState<boolean>(false);
     const [mode, setMode] = useState<string>('classic');
     const [subMode, setSubMode] = useState<string>('');
-
-    const [params, setParams] = useState(new URLSearchParams(search));
 
     const [subtitle, setSubtitle] = useState<string>(SubTitles[Math.floor(Math.random() * SubTitles.length)]);
     const [startVisible, setStartVisible] = useState<boolean>(false);
@@ -56,13 +55,13 @@ const Lobby = (props: LobbyProps) => {
     const [allowHints, setAllowHints] = useLocalStorage<boolean>('use_hints', false);
     const [disableProfile, setDisableProfile] = useLocalStorage<boolean>('disable_profile', false);
 
-    const [actors, setActors] = useState<Dict<Actor | null>>({});
+    const [items, setItems] = useState<Dict<GameType | null>>({});
 
     function isValid(): boolean {
         if (mode in GameTypes && subMode in GameTypes[mode].containers) {
             let valid = true;
             for (const key of GameTypes[mode].containers[subMode])
-                valid &&= actors[key] !== null;
+                valid &&= items[key] !== null;
             return valid;
         }
         return false;
@@ -78,34 +77,30 @@ const Lobby = (props: LobbyProps) => {
             } else if (key === 'sub-mode') {
                 if (value !== subMode)
                 setSubMode(value);
-            } else {
-                if (!actors[key] || actors[key]?.id.toString() !== value) {
-                    apiGetActor({id: value}).then(actor => {
-                        setActor(key, actor);
-                    });
-                }
+            } else if (!items[key] || items[key]?.id !== value) {
+                apiGetData({id: value}).then(item => setItem(key, item));
             }
         });
 
         setStartVisible(isValid());
-    }, [search, mode, subMode, actors, isValid, setActor]);
+    }, [search, mode, subMode, items, isValid, setItem]);
 
     function setGameMode(newMode: string) {
         const params = new URLSearchParams(search);
-        const a = actors;
+        const current = items;
 
-        for (const key of Object.keys(actors)) {
+        for (const key of Object.keys(current)) {
             params.delete(key);
-            a[key] = null;
+            current[key] = null;
         }
 
-        setActors(a);
+        setItems(current);
 
         setMode(newMode);
         params.set('mode', newMode);
 
         const newSubMode = GameTypes[newMode].default;
-        setSubMode(subMode);
+        setSubMode(newSubMode);
         if (newSubMode !== '')
             params.set('sub-mode', newSubMode);
 
@@ -114,19 +109,20 @@ const Lobby = (props: LobbyProps) => {
         setStartVisible(false);
     }
 
-    function setActor(key: string, actor: Actor | null) {
+    function setItem(key: string, item: Actor | Film | null) {
         const params = new URLSearchParams(search);
-        const a = actors;
+        const current = items;
 
-        a[key] = actor;
+        current[key] = item;
 
-        if (actor) {
-            params.set(key, actor.id.toString());
+        if (item) {
+            params.set(key, item.id);
         } else {
             params.delete(key);
         }
 
-        setActors(a);
+        setItems(current);
+
         navigate(`${pathname}?${params.toString()}`, {replace: true});
 
         setStartVisible(isValid());
@@ -152,43 +148,55 @@ const Lobby = (props: LobbyProps) => {
     }
 
     function initGameData() {
-        const nodes: Promise<ApiActor>[] = [];
         const params = new URLSearchParams(search);
+
+        const requires: Dict<string> = {};
+        const nodes: Array<Promise<GameType>> = [];
         params.forEach((value, key) => {
             if (key !== 'mode' && key !== 'sub-mode') {
-                const actor = actors[key];
-                if (actor) {
-                    nodes.push(apiGetActor(actor, true));
+                const item = items[key];
+                if (item) {
+                    nodes.push(apiGetData(item, true));
+                    requires[key] = item.id;
                 }
             }
         });
 
-        Promise.all(nodes).then(responses => {
-            const actorDict: Dict<Actor> = {};
-            const filmDict: Dict<FilmCast> = {};
+        Promise.all(Object.values(nodes)).then((responses: Array<GameType>) => {
+            const found: Array<string> = [];
+            const pool: Dict<GameType> = {};
 
-            responses.forEach(actor => {
-                actorDict[actor.name] = actor;
-                actor.credits?.cast.filter(shouldFilterFilm).forEach((f: FilmCast) => {
-                    filmDict[f.title] = f;
+            const altPromises: Array<Promise<AlternativeTitles>> = [];
+            responses.forEach(item => {
+                pool[item.id] = item;
+                found.push(item.id);
+                item.credits?.forEach((f: GameType) => {
+                    pool[f.id] = f;
+                    if (f.id.startsWith('f'))
+                        altPromises.push(apiGetAlternativeTitles(f));
                 });
             });
 
-            compileAlternateTitles(filmDict).then(map => {
+            Promise.all(altPromises).then((responses: Array<AlternativeTitles>) => {
+                const alt: Dict<Array<string>> = {};
+                responses.forEach(item => {
+                    alt[item.id] = item.titles;
+                });
+
                 props.setGameData({
                     mode: mode,
                     subMode: subMode,
-                    filmMap: map,
-                    found: {actors: actorDict, films: {}},
-                    answers: {actors: {}, films: filmDict},
-                    requires: responses
+                    altTitles: alt,
+                    found: found,
+                    pool: pool,
+                    requires: requires
                 });
             });
         });
     }
 
-    function filterSearchActors(r: ApiSearchActor, s: string) {
-        return filterActors(r, s, Object.values(actors).map(a => a?.id));
+    function filterSearch(r: Array<GameType>, s: string): Array<GameType> {
+        return filterActors(r, s, Object.values(items).flatMap(c => c ? [c.id] : []));
     }
 
     function getOptions(): Dict<boolean> {
@@ -203,7 +211,7 @@ const Lobby = (props: LobbyProps) => {
     const numSelected = [useStandard, useExpanded, useBollywood, useBlockbuster].filter(v => v).length;
 
     return (<>
-        {props.mobile && !mobileClosed && (<div className="alert">
+        {mobile && !mobileClosed && (<div className="alert">
             <InfoCircleFilled/>
             <span className="txt-span">Connect the Stars is better on desktop browsers</span>
             <button onClick={() => setMobileClosed(true)}><CloseIcon/></button>
@@ -223,10 +231,10 @@ const Lobby = (props: LobbyProps) => {
             ]}
         />
         <div style={{position: "absolute", top: 18, left: 18, zIndex: 2}}>
-            {props.mobile ? null : <props.HowToPlayButton mobile={false}/>}
+            {mobile ? null : <HowToPlayButton mobile={false} onClick={() => props.setShowHowToPlay(true)}/>}
         </div>
         <div style={{position: "absolute", top: 18, right: 18, zIndex: 2}}>
-            {props.mobile ? null : <OptionsButton mobile={false}/>}
+            {mobile ? null : <OptionsButton mobile={false} onClick={() => setShowOptions(true)}/>}
         </div>
         <div style={{
             display: 'flex',
@@ -275,7 +283,7 @@ const Lobby = (props: LobbyProps) => {
                     fontSize: '20px'
                 }}>— {subtitle} —</Button>
             </div>
-            {props.mobile ? (
+            {mobile ? (
                 <div style={{
                     display: 'flex',
                     flexDirection: 'row',
@@ -283,9 +291,9 @@ const Lobby = (props: LobbyProps) => {
                     justifyItems: 'space-between',
                     margin: '0 25px'
                 }}>
-                    <props.HowToPlayButton mobile={true}/>
+                    <HowToPlayButton mobile={true} onClick={() => props.setShowHowToPlay(true)}/>
                     <div style={{marginLeft: '16px'}}>
-                        <OptionsButton mobile={true}/>
+                        <OptionsButton mobile={true} onClick={() => setShowOptions(true)}/>
                     </div>
                 </div>
             ) : null}
@@ -354,13 +362,13 @@ const Lobby = (props: LobbyProps) => {
                 flexWrap: 'wrap'
             }}>
                 {mode in GameTypes && subMode in GameTypes[mode].containers && GameTypes[mode].containers[subMode].map(key => {
-                    return <ActorContainer
+                    return <Container
                         key={key}
                         title={key}
-                        actor={actors[key]}
-                        setActor={setActor}
+                        item={items[key]}
+                        setItem={setItem}
                         showProfile={!disableProfile}
-                        filter={filterSearchActors}
+                        filter={filterSearch}
                         getOptions={getOptions}
                     />;
                 })}
@@ -372,40 +380,17 @@ const Lobby = (props: LobbyProps) => {
                 justifyContent: 'center',
                 marginBottom: '25px'
             }}>
-                {props.showResume ? (
-                    <Button
-                        className="btn-solid"
-                        style={{
-                            opacity: props.showResume ? 1 : 0,
-                            pointerEvents: props.showResume ? 'auto' : 'none',
-                            width: '175px',
-                            marginRight: '20px'
-                        }}
-                        onClick={() => props.setShowResume(true)}
-                    >
-                        Resume Game
-                    </Button>
-                ) : null}
-                <Button
-                    className="btn-solid"
-                    style={{
-                        opacity: startVisible ? 1 : 0,
-                        pointerEvents: startVisible ? 'auto' : 'none',
-                        width: '175px'
-                }}
-                    onClick={() => initGameData()}
-                    iconRight={<ArrowRightOutlined/>}
-                >
-                    Start Game
-                </Button>
+                <ResumeButton visible={props.showResume} onClick={() => props.setShowResume(true)}/>
+                <RightArrowButton label="Start Game" visible={startVisible} onClick={() => initGameData()}/>
             </div>
             <CreditsSection/>
         </div>
     </>);
+
+    // TODO: ADD RIPPLE
     // TODO: Credits Section - Finish SVGs and styles
     // TODO: Fix container sizing and scrolling on differing screen sizes
     // TODO: Crate HELP Sections for each game
-    // TODO: Add ripple effect to buttons
 }
 
 export default Lobby;

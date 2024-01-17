@@ -21,12 +21,12 @@ const root = ReactDOM.createRoot(
 );
 
 const router = createBrowserRouter([
-    {path: "", element: <Page name="home"><Home/></Page>},
-    {path: "/blog", element: <Page name="blog"><Blog/></Page>},
-    {path: "/connect-the-stars", element: <Page name="cts"><ConnectTheStars/></Page>},
-    {path: "/resume", element: <Page name="resume"><Resume/></Page>},
-    {path: "/library", element: <Page name="library"><Library/></Page>},
-    {path: "/projects", element: <Page name="projects"><Projects/></Page>},
+    {path: "", element: <Page name="home" root={Home}/>},
+    {path: "/blog", element:<Page nav name="blog" root={Blog}/>},
+    {path: "/connect-the-stars", element: <Page nav name="cts" root={ConnectTheStars}/>},
+    {path: "/resume", element: <Page nav name="resume" root={Resume}/>},
+    {path: "/library", element: <Page nav name="library" root={Library}/>},
+    {path: "/projects", element: <Page nav name="projects" root={Projects}/>},
 ], {basename: '/'});
 
 root.render(

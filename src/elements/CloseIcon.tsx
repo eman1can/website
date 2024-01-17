@@ -1,4 +1,4 @@
-import find from "../utils";
+import { find } from "../utils";
 
 type CloseIconProps = {
     variant?: "light" | "dark";

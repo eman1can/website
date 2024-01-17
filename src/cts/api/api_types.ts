@@ -21,7 +21,7 @@ type Language = {
     iso_639_1: string
 }
 
-type ActorCast = {
+export type ActorCast = {
     id: number
     name: string
     popularity: number
@@ -110,6 +110,7 @@ export type ApiFilm = {
     release_date: string | null
     imdb_id: string | null
     poster_path: string | null
+    image: string | null
     backdrop_path: string | null
     belongs_to_collection: string | null
     genres: Array<Genre>
@@ -130,6 +131,7 @@ export type ApiActor = {
     name: string
     popularity: number
     profile_path: string | null
+    image: string | null
     adult: boolean
     gender: 0 | 1 | 2 | 3
     known_for_department: string
@@ -181,6 +183,7 @@ type SearchActor = {
     adult: boolean
     original_name: string
     popularity: number
+    image: string | null
     profile_path: string | null
     known_for_department: string
     gender: 0 | 1 | 2 | 3

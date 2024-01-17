@@ -1,14 +1,13 @@
 import React from 'react';
 
 import LParticles from "../elements/Particles";
-import find from "../utils";
+import { find } from "../utils";
 
 import './home.scss';
-import {useMobile} from "../mobile";
+import { PageContentProps } from "./Page";
 
-function Home() {
-    const mobile = useMobile();
-
+function Home(props: Readonly<PageContentProps>) {
+    const mobile = props.scale.startsWith('mobile');
     return (
         <div className="body">
             <div className="full">

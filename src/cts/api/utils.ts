@@ -1,23 +1,72 @@
-import { Actor } from "../types";
-import { ApiActor, ApiSearchActor } from "./api_types";
+import { ActorCast, ApiActor, ApiAlternativeTitles, ApiFilm, ApiSearchActor, FilmCast } from "./api_types";
+import { AlternativeTitles, Film, Actor } from "./types";
+import { shouldFilterActor, shouldFilterFilm } from "../../utils";
+import { SecretActors } from "../datasets";
+import { GameType } from "../types";
 
-export function filterActors(r: ApiSearchActor, query: string, current: Array<number | undefined>): null | Actor[] {
-    const filteredForPhotos: Actor[] = r.results.filter(
-        (star: any) => {
-            return star.profile_path != null && star.name.length > 1 && !current.includes(star.id);
-        });
+export function actorsFromSearchActor(raw: ApiSearchActor): Array<Actor> {
+    return raw.results.filter(a => a.profile_path).map(a => {
+        return {
+            id: `a${a.id}`,
+            name: a.name,
+            image: a.profile_path ? a.profile_path : '',
+            popularity: a.popularity
+        }
+    });
+}
 
-    if (query.toLowerCase() === "eric bai") {
-        filteredForPhotos.push({name: "Eric Bai", id: -1, popularity: 0, profile_path: 'eric'});
-    } else if (query.toLowerCase() === "amanda hum") {
-        filteredForPhotos.push({name: "Amanda Hum", id: -2, popularity: 0, profile_path: 'amanda'});
-    } else if (query.toLowerCase() === "ethan wolfe") {
-        filteredForPhotos.push({name: "Ethan Wolfe", id: -3, popularity: 0, profile_path: 'ethan'});
+export function filmFromFilmCast(raw: FilmCast): Film {
+    return {
+        id: `f${raw.id}`,
+        name: raw.title,
+        image: raw.poster_path ? raw.poster_path : '',
+        popularity: raw.popularity
+    };
+}
+
+export function actorFromActorCast(raw: ActorCast): Actor {
+    return {
+        id: `a${raw.id}`,
+        name: raw.name,
+        image: raw.profile_path ? raw.profile_path : '',
+        popularity: raw.popularity
+    };
+}
+
+export function actorFromApiActor(raw: ApiActor): Actor {
+    return {
+        id: `a${raw.id}`,
+        name: raw.name,
+        image: raw.profile_path ? raw.profile_path : '',
+        popularity: raw.popularity,
+        credits: raw.credits?.cast.filter(shouldFilterFilm).map(c => filmFromFilmCast(c))
+    };
+}
+
+export function filmFromApiFilm(raw: ApiFilm): Film {
+    return {
+        id: `f${raw.id}`,
+        name: raw.title,
+        image: raw.poster_path ? raw.poster_path : '',
+        popularity: raw.popularity,
+        credits: raw.credits?.cast.filter(shouldFilterActor).map(c => actorFromActorCast(c))
+    }
+}
+
+export function alternativeTitlesFromApiAlternativeTitles(raw: ApiAlternativeTitles): AlternativeTitles {
+    return {
+        id: `f${raw.id}`,
+        titles: raw.titles.map(t => t.title)
+    }
+}
+
+export function filterActors(r: Array<GameType>, query: string, current: Array<string>): Array<GameType> {
+    const filteredForPhotos = r.filter(item => item.name.length > 1 && !current.includes(item.id));
+
+    for (const option of SecretActors) {
+        if (query.toLowerCase() === option.name)
+            filteredForPhotos.push(option);
     }
 
-    if (filteredForPhotos.length > 0) {
-        return filteredForPhotos.slice(0, 7);
-    }
-
-    return null;
+    return filteredForPhotos.slice(0, 7);
 }

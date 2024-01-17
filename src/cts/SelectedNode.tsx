@@ -1,8 +1,9 @@
-import React, {useState} from "react";
-import {Card, ConfigProvider, List, Button, Popover} from "antd";
-import {Actor, Dict, Film} from "./types";
+import React from "react";
+import {Card, ConfigProvider, List, Button} from "antd";
+import {Dict, GameType} from "./types";
 import CloseIcon from "../elements/CloseIcon";
-import {getProfileImage} from "./api/tmdb";
+import { getProfileImage } from "./api/tmdb";
+import { toGraphKey } from "./utils";
 
 type CreditCardProps = {
     title: string
@@ -10,12 +11,13 @@ type CreditCardProps = {
     onClick: (id: string) => void
 }
 
-function CreditsCard(props: CreditCardProps) {
-    const customizeRenderEmpty = () => (
-        <div className="no-data">
+function CreditsCard(props: Readonly<CreditCardProps>) {
+
+    const RenderEmpty = () => {
+        return (<div className="no-data">
             <p>No Data</p>
-        </div>
-    );
+        </div>);
+    }
 
     return (
         <Card
@@ -26,20 +28,19 @@ function CreditsCard(props: CreditCardProps) {
             style={{width: "100%", display: "flex", flexDirection: "column"}}
         >
             <div className="credits-list-container">
-                <ConfigProvider renderEmpty={customizeRenderEmpty}>
+                <ConfigProvider renderEmpty={RenderEmpty}>
                     <List
                         className="credits-list"
                         size="small"
                         dataSource={props.dataSource}
                         renderItem={item => (
                             <List.Item onClick={() => props.onClick(item.id)}>
-                                <a
+                                <button
                                     className="list-link"
-                                    href="#"
                                     onClick={() => props.onClick(item.id)}
                                 >
                                     {item.title}
-                                </a>
+                                </button>
                             </List.Item>
                         )}
                     />
@@ -51,47 +52,25 @@ function CreditsCard(props: CreditCardProps) {
 
 type SelectedNodeProps = {
     selectedNode: { id: string, key: string }
-    foundActors: Dict<Actor>
-    foundFilms: Dict<Film>
+    pool: Dict<GameType>
+    found: Array<string>
     setSelectedNode: (id: string) => void
     handleUnselectedNode: () => void
 }
 
-function SelectedNode(props: SelectedNodeProps) {
-    const key = props.selectedNode.key;
-    const isActor = props.selectedNode.id[0] === 'a';
+function SelectedNode(props: Readonly<SelectedNodeProps>) {
+    const key = props.selectedNode.id;
+    const isActor = key.startsWith('a');
+    const item = props.pool[key];
+    const credits = item.credits ? item.credits.filter(c => props.found.includes(c.id)) : [];
 
-    let title = '';
-    let src = '';
-    const credits: Array<{id: string, title: string}> = [];
-
-    if (isActor) {
-        const actor = props.foundActors[key];
-        title = actor.name;
-        src = getProfileImage(actor.profile_path ? actor.profile_path : '');
-
-    } else {
-        const film = props.foundFilms[key];
-        title = film.title;
-        src = getProfileImage(film.poster_path ? film.poster_path : '');
-        // credits = Object.keys(props.actor.credits)
-        //     .filter(key => key in props.foundFilms)
-        //     .reduce((arr, key) => {
-        //         const toConcat = props.actor.credits[key].filter(film =>
-        //             props.foundFilms[key].map(f => f.id).includes(film.id)
-        //         );
-        //         return arr.concat(toConcat);
-        //     }, []);
-    }
+    const height = 600;
 
     return (
         <div
             className="selected-node-info"
             style={{
-                position: "absolute",
-                left: 18,
-                bottom: 121,
-                width: 202,
+                width: height / 3 * 2 + 2,
                 borderColor: "#fff"
             }}
         >
@@ -116,17 +95,17 @@ function SelectedNode(props: SelectedNodeProps) {
                     type="link"
                     icon={<CloseIcon/>}
                 />
-                <div
-                    className="portrait"
+                <div className="portrait"
                     style={{
-                        backgroundImage: title
-                            ? `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0) 15% 66%, rgba(0,0,0,1)), url(${src})`
-                            : `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0) 15%), url(${src})`,
+                        height: height,
+                        backgroundImage: isActor
+                            ? `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0) 15% 66%, rgba(0,0,0,1)), url(${getProfileImage(item.image, 'lg')})`
+                            : `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0) 15%), url(${getProfileImage(item.image, 'lg')})`,
                         backgroundSize: "100% auto"
                     }}
                 >
                     <div style={{flexGrow: 1}}/>
-                    {title && (
+                    {isActor && (
                         <div
                             style={{
                                 paddingLeft: 6,
@@ -135,7 +114,7 @@ function SelectedNode(props: SelectedNodeProps) {
                                 flexShrink: 0
                             }}
                         >
-                            {title}
+                            {item.name}
                         </div>
                     )}
                 </div>
@@ -154,23 +133,23 @@ function SelectedNode(props: SelectedNodeProps) {
                 <div className='credits-title'>
                     - Films Found -
                 </div>
-                {credits.length === 0 ? (
-                    <div className='credits-empty'>
-                        None
-                    </div>
-                ) : (
+                {credits ? (
                     <div className='credits-list-container'>
                         <div className='credits-list'>
-                            {credits.map(({id, title}) => {
+                            {credits.map((item: GameType) => {
                                 return (<button
-                                    key={id}
+                                    key={item.id}
                                     className='credits-list-item'
-                                    onClick={() => props.setSelectedNode(id)}
+                                    onClick={() => props.setSelectedNode(item.id)}
                                 >
-                                    {title}
+                                    {item.name}
                                 </button>);
                             })}
                         </div>
+                    </div>
+                ) : (
+                    <div className='credits-empty'>
+                        None
                     </div>
                 )}
             </div>

@@ -1,12 +1,8 @@
-import Navbar from "../elements/Navbar";
+import { PageContentProps } from "./Page";
 
-const Projects = () => {
-    return (
-        <div className="body">
-            <Navbar/>
-            <div style={{height: '55px'}}/>
-        </div>
-    );
+const Projects = (props: Readonly<PageContentProps>) => {
+    const mobile = props.scale.startsWith('mobile');
+    return <div>Empty Page</div>;
 }
 
 export default Projects;

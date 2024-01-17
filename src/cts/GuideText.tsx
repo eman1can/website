@@ -1,5 +1,5 @@
 import React from "react";
-import find from "../utils";
+import { find } from "../utils";
 import Unselectable from "../elements/Unselectable";
 
 function GuideText() {
