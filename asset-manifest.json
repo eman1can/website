@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/static/css/main.ab3d2944.css",
-    "main.js": "/static/js/main.c564aa8e.js",
+    "main.css": "/static/css/main.111c07f3.css",
+    "main.js": "/static/js/main.19027925.js",
     "static/media/PlayfairDisplay-Regular.ttf": "/static/media/PlayfairDisplay-Regular.5424639aa09a7d03386f.ttf",
     "static/media/Akkurat-Mono.ttf": "/static/media/Akkurat-Mono.e33e6379a2f048e2b663.ttf",
     "index.html": "/index.html",
-    "main.ab3d2944.css.map": "/static/css/main.ab3d2944.css.map",
-    "main.c564aa8e.js.map": "/static/js/main.c564aa8e.js.map"
+    "main.111c07f3.css.map": "/static/css/main.111c07f3.css.map",
+    "main.19027925.js.map": "/static/js/main.19027925.js.map"
   },
   "entrypoints": [
-    "static/css/main.ab3d2944.css",
-    "static/js/main.c564aa8e.js"
+    "static/css/main.111c07f3.css",
+    "static/js/main.19027925.js"
   ]
 }
