@@ -1,0 +1,117 @@
+.body {
+  background-color: #000000;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+a {
+  text-decoration: none
+}
+
+.subtitle {
+  margin-top: 1rem;
+  font-size: 2em;
+  font-family: "Akkurat-Mono", sans-serif;
+}
+
+.main-btn {
+  box-sizing: inherit;
+  transition-property: all;
+  transition-duration: .6s;
+  transition-timing-function: ease;
+
+  color: #fff;
+  background-color: transparent;
+  border: 1px solid transparent;
+  font-size: 48px;
+  font-weight: 400;
+  line-height: 45px;
+  margin: 1em 0 0 0;
+  position: relative;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.main-btn:hover, .main-btn:active {
+  letter-spacing: 7px;
+}
+
+.main-btn:after, .main-btn:before {
+  backface-visibility: hidden;
+  border: 2px solid rgba(0.5, 0.7, 1, 0);
+  bottom: 0;
+  content: " ";
+  display: block;
+  margin: 0 auto;
+  position: relative;
+  transition: all 280ms ease-in-out;
+  width: 0;
+}
+
+.main-btn:hover:after, .main-btn:hover:before {
+  backface-visibility: hidden;
+  border-color: #a95cfa;
+  transition: width 350ms ease-in-out;
+  width: 100%;
+}
+
+.main-btn:hover:before {
+  bottom: auto;
+  top: 0;
+  width: 100%;
+}
+
+.button-col {
+  flex: 1 0 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.img-row {
+  flex: 0 1 33%;
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.link-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-img {
+  z-index: 1;
+  height: 100vh;
+  object-fit: cover;
+}
+
+.ripped {
+  z-index: 2;
+}
+
+.ripped::after {
+  content: "";
+  position: fixed;
+  height: 100vh;
+  width: 50px;
+  z-index: 2;
+  background: url(../assets/home/rip.svg) right;
+  background-size: 300%;
+}
+
+.header {
+  text-align: center;
+  font-family: Akkurat-Mono, sans-serif;
+  color: white;
+}
+

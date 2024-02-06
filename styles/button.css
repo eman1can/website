@@ -1,0 +1,60 @@
+.btn {
+    font-family: "Akkurat-Mono", Arial, Helvetica, sans-serif;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: normal;
+    background: transparent;
+
+    opacity: 1;
+    color: #fff;
+    border: none;
+
+    font-size: 14pt;
+    height: 40px;
+    min-width: 40px;
+}
+
+.sm .btn {
+    font-size: 10pt;
+    height: 35px;
+    min-width: 35px;
+}
+
+.lg .btn {
+    font-size: 16pt;
+    height: 40px;
+    min-width: 40px;
+}
+
+.btn-solid {
+    border: 1px solid #fff;
+    backdrop-filter: blur(10px);
+    border-radius: 0;
+}
+
+.btn-solid:focus {
+    border: 1px solid #EDCF73;
+}
+
+.btn-solid::selection {
+    border: 1px solid #EDCF73;
+}
+
+.btn-solid:hover {
+    border-color: #EDCF73;
+    background-color: #EDCF73 !important;
+    color: #000;
+    transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+/*.btn-label {*/
+/*    padding: 11px 15px 9px;*/
+/*}*/
+
+.btn > .icon + span {
+    margin-left: 8px;
+}
+
+.btn > span + .icon {
+    margin-left: 8px;
+}

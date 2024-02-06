@@ -1,0 +1,73 @@
+.has-dropcap:first-letter {
+    font-family: "Akkurat-Mono", Arial, Helvetica, sans-serif;
+    float: left;
+    font-size: 6rem;
+    line-height: 0.65;
+    margin: 0.1em 0.1em 0.2em 0;
+}
+
+.drop-cap {
+    font-family: "Akkurat-Mono", Arial, Helvetica, sans-serif;
+    color: #303030;
+    float: left;
+    font-size: 6rem;
+    line-height: 1;
+    margin: 0.1em 0.1em 0.2em 0;
+    padding: 0.1em;
+}
+.drop-cap:before,
+.drop-cap:after {
+    content: "";
+    display: block;
+}
+.drop-cap:before {
+    margin-top: -0.2em;
+}
+.drop-cap:after {
+    margin-bottom: -0.15em;
+}
+
+p {
+    font-family: "Akkurat-Mono", Arial, Helvetica, sans-serif;
+    font-size: 1.5em;
+    text-align: justify;
+}
+
+.bold {
+    font-weight: 900;
+}
+
+.title-h1 {
+    font-family: Akkurat-Mono, sans-serif;
+    font-size: 3.5em;
+    text-align: center;
+}
+
+.title-h2 {
+    font-family: Akkurat-Mono, sans-serif;
+    font-size: 3em;
+    text-align: center;
+}
+
+.title-h3 {
+    font-family: Akkurat-Mono, sans-serif;
+    font-size: 2em;
+    text-align: center;
+}
+
+.title-h4 {
+    font-family: Akkurat-Mono, sans-serif;
+    font-size: 2em;
+    text-align: start;
+}
+
+.caption {
+    font-family: Akkurat-Mono, sans-serif;
+    font-size: 1em;
+    text-align: start;
+}
+
+.footnote {
+    vertical-align: super;
+    font-size: 0.75em;
+}

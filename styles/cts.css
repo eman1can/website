@@ -1,0 +1,166 @@
+@import "./button.css";
+@import "./modal.css";
+@import "./lobby.css";
+
+.cts-background {
+    background: linear-gradient(#040508, #1d1f34);
+
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+.playfair {
+    font-family: "PlayfairDisplay-Regular", "serif-regular", serif;
+}
+
+.akkurat {
+    font-family: "Akkurat-Mono", sans-serif;
+    text-transform: uppercase;
+}
+
+.alert {
+    position: relative;
+    height: 40px;
+    margin: 20px 20px;
+    background-color: #000;
+    backdrop-filter: none;
+    border: 1px solid #fff;
+    color: #fff;
+    z-index: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: start;
+}
+
+.alert > span {
+    margin-left: 10px;
+}
+
+.alert > .txt-span {
+    flex: 1 0 0;
+    margin: 0 10px;
+}
+
+.alert > button {
+    background-color: transparent;
+    border: 0 solid transparent;
+    padding: 8px 13px 8px 6px;
+}
+
+/*.ant-modal-content {*/
+/*    background-color: #14162e;*/
+/*    color: #fff;*/
+/*    text-align: center;*/
+/*}*/
+
+.row {
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
+}
+
+.center {
+    justify-content: center;
+    align-items: stretch;
+}
+
+
+
+
+
+/*.ant-modal-body {*/
+/*    font-size: 14pt;*/
+/*    padding: 0px 0px 18px 0px;*/
+/*    background-color: #14162E;*/
+/*}*/
+
+/*.ant-switch-checked {*/
+/*    background-color: #EDCF73;*/
+/*}*/
+
+/*.message {*/
+/*    font-family: 'Akkurat-Mono', 'serif-regular', serif;*/
+/*    font-size: 14px;*/
+/*    line-height: normal;*/
+/*    text-transform: uppercase;*/
+/*    color: #fff;*/
+/*}*/
+
+/*h1 {*/
+/*    font-family: PlayfairDisplay-Regular, serif;*/
+/*    font-size: 32pt;*/
+/*}*/
+
+/*@keyframes fade-in-down {*/
+/*    from {*/
+/*        opacity: 0;*/
+/*        transform: translateY(-15px);*/
+/*    }*/
+/*    to {*/
+/*        opacity: 1;*/
+/*        transform: translateY(0);*/
+/*    }*/
+/*}*/
+
+/*@keyframes fade-out-up {*/
+/*    from {*/
+/*        opacity: 1;*/
+/*        transform: translateY(0);*/
+/*    }*/
+/*    to {*/
+/*        opacity: 0;*/
+/*        transform: translateY(-15px);*/
+/*    }*/
+/*}*/
+
+/*.popper {*/
+/*    border: 1px solid #fff;*/
+/*    margin-top: 5px;*/
+/*    backdrop-filter: blur(10px);*/
+/*    width: 306px;*/
+/*    display: flex;*/
+/*    align-items: stretch;*/
+/*    flex-direction: column;*/
+/*    gap: 5px;*/
+/*    padding: 5px;*/
+
+/*    position: fixed;*/
+/*    z-index: 2;*/
+
+/*    opacity: 0;*/
+/*    height: 0;*/
+/*    pointer-events: none;*/
+/*    transform: translateY(-15px);*/
+/*}*/
+
+/*.popper.visible {*/
+/*    opacity: 1;*/
+/*    height: auto;*/
+/*    pointer-events: auto;*/
+/*    transform: translateY(0);*/
+/*    !*animation: fade-in-down ease-out 0.1s forwards;*!*/
+/*}*/
+
+/*.popper > button {*/
+/*    background-color: transparent;*/
+/*    border: 0 solid transparent;*/
+/*    font-family: Akkurat-Mono, Arial, Helvetica, sans-serif;*/
+/*    font-size: 16px;*/
+/*    text-transform: uppercase;*/
+/*}*/
+
+/*.popper > button:hover {*/
+/*    background-color: #EDCF73;*/
+/*    color: #000;*/
+/*}*/
