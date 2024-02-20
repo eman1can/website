@@ -1,42 +1,38 @@
-import {InfoCircleFilled, ArrowDownOutlined} from "@ant-design/icons";
-import { find } from "../utils";
+import {InfoCircleFilled, ArrowDownOutlined, ArrowRightOutlined} from "@ant-design/icons";
+import {find} from "../utils";
 import OptionsModal from "./OptionsModal";
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import useLocalStorage from "./local_storage";
 import Unselectable from '../elements/Unselectable';
 import Button from "../elements/Button";
-import { GameNames, GameTypes, SubTitles } from "./games";
+import {GameNames, GameTypes, SubTitles} from "./games";
 import Container from "./Container";
-import { GameData, Dict, GameType } from "./types";
-import { Actor, AlternativeTitles, Film } from "./api/types";
+import {GameData, Dict, GameType} from "./types";
+import {Actor, AlternativeTitles, Film} from "./api/types";
 import CreditsSection from "./CreditsSection";
 import CloseIcon from "../elements/CloseIcon";
-import { useLocation, useNavigate } from "react-router-dom";
-import { getData as apiGetData, getAlternateTitles as apiGetAlternativeTitles } from "./api/tmdb";
-import { filterActors } from "./api/utils";
+import {useLocation, useNavigate} from "react-router-dom";
+import {getData as apiGetData, getAlternateTitles as apiGetAlternativeTitles} from "./api/tmdb";
+import {filterActors} from "./api/utils";
 import HowToPlayButton from "../elements/HowToPlayButton";
 import OptionsButton from "../elements/OptionsButton";
 import RightArrowButton from "../elements/RightArrowButton";
-import ResumeButton from "../elements/ResumeButton";
+import {ModalProps} from "../elements/Modal";
+import getHowToPlayModal from "./HowToPlayModal";
+import getOptionsModal from "./OptionsModal";
 
 
 export type LobbyProps = {
     scale: string
-    showHowToPlay: boolean
-    setShowHowToPlay: ((newValue: boolean) => void)
-    showResume: boolean
-    setShowResume: ((newValue: boolean) => void)
-    setGameData: ((newData: GameData) => void)
+    setModalContent: (newContent: ModalProps | null) => void
+    resumeContent: ModalProps | null
+    setGameData: (newData: GameData) => void
 }
 
 const Lobby = (props: Readonly<LobbyProps>) => {
     const mobile = props.scale.startsWith('mobile');
 
-    const [mobileClosed, setMobileClosed] = useLocalStorage<boolean>('mobile', false);
-
-    const [showOptions, setShowOptions] = useState<boolean>(false);
-
-    const { pathname, search } = useLocation();
+    const {pathname, search} = useLocation();
     const navigate = useNavigate();
 
     const [selectGameMode, setSelectGameMode] = useState<boolean>(false);
@@ -57,15 +53,36 @@ const Lobby = (props: Readonly<LobbyProps>) => {
 
     const [items, setItems] = useState<Dict<GameType | null>>({});
 
-    function isValid(): boolean {
+    const isValid = useCallback<() => boolean>(() => {
         if (mode in GameTypes && subMode in GameTypes[mode].containers) {
             let valid = true;
-            for (const key of GameTypes[mode].containers[subMode])
-                valid &&= items[key] !== null;
+            for (const key of GameTypes[mode].containers[subMode]) {
+                console.log(mode, subMode, key, items[key]);
+                valid &&= items[key] !== null && items[key] !== undefined;
+            }
             return valid;
         }
         return false;
-    }
+    }, [items, mode, subMode]);
+
+    const setItem = useCallback<(key: string, item: Actor | Film | null) => void>((key: string, item: Actor | Film | null) => {
+        const params = new URLSearchParams(search);
+        const current = items;
+
+        current[key] = item;
+
+        if (item) {
+            params.set(key, item.id);
+        } else {
+            params.delete(key);
+        }
+
+        setItems(current);
+
+        navigate(`${pathname}?${params.toString()}`, {replace: true});
+
+        setStartVisible(isValid());
+    }, [isValid, items, navigate, pathname, search]);
 
     // Read the starting url params
     useEffect(() => {
@@ -76,7 +93,7 @@ const Lobby = (props: Readonly<LobbyProps>) => {
                     setMode(value);
             } else if (key === 'sub-mode') {
                 if (value !== subMode)
-                setSubMode(value);
+                    setSubMode(value);
             } else if (!items[key] || items[key]?.id !== value) {
                 apiGetData({id: value}).then(item => setItem(key, item));
             }
@@ -107,25 +124,6 @@ const Lobby = (props: Readonly<LobbyProps>) => {
         navigate(`${pathname}?${params.toString()}`, {replace: true});
 
         setStartVisible(false);
-    }
-
-    function setItem(key: string, item: Actor | Film | null) {
-        const params = new URLSearchParams(search);
-        const current = items;
-
-        current[key] = item;
-
-        if (item) {
-            params.set(key, item.id);
-        } else {
-            params.delete(key);
-        }
-
-        setItems(current);
-
-        navigate(`${pathname}?${params.toString()}`, {replace: true});
-
-        setStartVisible(isValid());
     }
 
     function cycleSubMode() {
@@ -210,37 +208,71 @@ const Lobby = (props: Readonly<LobbyProps>) => {
 
     const numSelected = [useStandard, useExpanded, useBollywood, useBlockbuster].filter(v => v).length;
 
+    const howToPlayContent = {
+        scale: '',
+        children: getHowToPlayModal(),
+        onCancel: () => props.setModalContent(null),
+        onSuccess: () => {
+        },
+        showClose: true
+    };
+
+    const options = [
+        {loc: 'Gameplay', title: 'Allow In-Game Hints', state: allowHints, toggle: setAllowHints},
+        {loc: 'Gameplay', title: 'Allow Movie in a Series', state: allowMovieSeries, toggle: setAllowMovieSeries},
+        {loc: 'Gameplay', title: 'Allow TV Shows', state: allowTVSeries, toggle: setAllowTVSeries},
+        {loc: 'Gameplay', title: 'Disable Profile Pictures', state: disableProfile, toggle: setDisableProfile},
+        {
+            loc: 'Choose For Me',
+            title: 'Use default actors',
+            state: useStandard,
+            toggle: setUseStandard,
+            disabled: useStandard && numSelected === 1
+        },
+        {
+            loc: 'Choose For Me',
+            title: 'Use expanded actors',
+            state: useExpanded,
+            toggle: setUseExpanded,
+            disabled: useExpanded && numSelected === 1
+        },
+        {
+            loc: 'Choose For Me',
+            title: 'Use Bollywood actors',
+            state: useBollywood,
+            toggle: setUseBollywood,
+            disabled: useBollywood && numSelected === 1
+        },
+        {
+            loc: 'Choose For Me',
+            title: 'Use pre-blockbuster actors',
+            state: useBlockbuster,
+            toggle: setUseBlockbuster,
+            disabled: useBlockbuster && numSelected === 1
+        }
+    ];
+
+    const optionsContent = {
+        scale: '',
+        children: getOptionsModal(options),
+        onCancel: () => props.setModalContent(null),
+        onSuccess: () => {
+        },
+        showClose: true
+    }
+
     return (<>
-        {mobile && !mobileClosed && (<div className="alert">
-            <InfoCircleFilled/>
-            <span className="txt-span">Connect the Stars is better on desktop browsers</span>
-            <button onClick={() => setMobileClosed(true)}><CloseIcon/></button>
-        </div>)}
-        <OptionsModal
-            visible={showOptions}
-            onCancel={() => setShowOptions(false)}
-            options={[
-                {loc: 'Gameplay', title: 'Allow In-Game Hints', state: allowHints, toggle: setAllowHints},
-                {loc: 'Gameplay', title: 'Allow Movie in a Series', state: allowMovieSeries, toggle: setAllowMovieSeries},
-                {loc: 'Gameplay', title: 'Allow TV Shows', state: allowTVSeries, toggle: setAllowTVSeries},
-                {loc: 'Gameplay', title: 'Disable Profile Pictures', state: disableProfile, toggle: setDisableProfile},
-                {loc: 'Choose For Me', title: 'Use default actors', state: useStandard, toggle: setUseStandard, disabled: useStandard && numSelected === 1},
-                {loc: 'Choose For Me', title: 'Use expanded actors', state: useExpanded, toggle: setUseExpanded, disabled: useExpanded && numSelected === 1},
-                {loc: 'Choose For Me', title: 'Use Bollywood actors', state: useBollywood, toggle: setUseBollywood, disabled: useBollywood && numSelected === 1},
-                {loc: 'Choose For Me', title: 'Use pre-blockbuster actors', state: useBlockbuster, toggle: setUseBlockbuster, disabled: useBlockbuster && numSelected === 1}
-            ]}
-        />
-        <div style={{position: "absolute", top: 18, left: 18, zIndex: 2}}>
-            {mobile ? null : <HowToPlayButton mobile={false} onClick={() => props.setShowHowToPlay(true)}/>}
+        <div style={{position: "fixed", left: 18, zIndex: 2, marginTop: 18}}>
+            {mobile ? null : <HowToPlayButton mobile={false} onClick={() => props.setModalContent(howToPlayContent)}/>}
         </div>
-        <div style={{position: "absolute", top: 18, right: 18, zIndex: 2}}>
-            {mobile ? null : <OptionsButton mobile={false} onClick={() => setShowOptions(true)}/>}
+        <div style={{position: "fixed", right: 18, zIndex: 2, marginTop: 18}}>
+            {mobile ? null : <OptionsButton mobile={false} onClick={() => props.setModalContent(optionsContent)}/>}
         </div>
         <div style={{
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'stretch',
-            justifyContent  : 'flex-start'
+            alignItems: 'center',
+            justifyContent: 'center'
         }}>
             <div style={{
                 display: 'flex',
@@ -259,7 +291,7 @@ const Lobby = (props: Readonly<LobbyProps>) => {
                 </Unselectable>
                 <Unselectable style={{padding: 0}}>
                     <h1
-                        className="unselectable"
+                        className="unselectable playfair"
                         style={{
                             color: "#fff",
                             marginBottom: 0,
@@ -270,71 +302,80 @@ const Lobby = (props: Readonly<LobbyProps>) => {
                     </h1>
                 </Unselectable>
             </div>
-            <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginBottom: '20px'
-            }}>
-                <Button onClick={(() => cycleSubtitle())} style={{
-                    border: '0px solid white',
-                    fontVariant: 'small-caps',
-                    textTransform: 'capitalize',
-                    fontSize: '20px'
-                }}>— {subtitle} —</Button>
-            </div>
-            {mobile ? (
+            {!mobile ? (
                 <div style={{
                     display: 'flex',
-                    flexDirection: 'row',
                     alignItems: 'center',
-                    justifyItems: 'space-between',
-                    margin: '0 25px'
+                    justifyContent: 'center',
+                    marginBottom: '20px'
                 }}>
-                    <HowToPlayButton mobile={true} onClick={() => props.setShowHowToPlay(true)}/>
-                    <div style={{marginLeft: '16px'}}>
-                        <OptionsButton mobile={true} onClick={() => setShowOptions(true)}/>
-                    </div>
+                    <Button onClick={(() => cycleSubtitle())} style={{
+                        border: '0px solid white',
+                        fontVariant: 'small-caps',
+                        textTransform: 'capitalize',
+                        fontSize: '20px'
+                    }}>— {subtitle} —</Button>
                 </div>
             ) : null}
-            <div id='mode-row' style={{
+            <div style={{
                 display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'center'
+                flexDirection: 'column',
+                margin: '25px',
+                gap: '16px',
+                maxWidth: '500px',
+                minWidth: props.scale.includes('sm') ? '175px' : '250px'
             }}>
-                <Button
-                    className="btn-solid"
-                    style={{width: '300px'}}
-                    onClick={() => props.setShowHowToPlay(true)}
-                >
-                    {GameNames[mode]}
-                </Button>
-                <Button
-                    className="icon-btn btn-solid"
-                    style={{width: '80px'}}
-                    icon={<ArrowDownOutlined style={{padding: '0 0 0 6px'}}/>}
-                    onClick={() => setSelectGameMode(!selectGameMode)}
-                />
-            </div>
-            <div className={`popper ${selectGameMode && 'visible'}`} style={{
-                left: '50%',
-                marginLeft: '-190px',
-                width: '380px',
-                top: document.getElementById('mode-row')?.getBoundingClientRect().bottom,
-                backdropFilter: 'blur(50px)'
-            }}>
-                {Object.keys(GameNames).map(key => {
-                    return (
-                        <button
-                            key={key}
-                            onClick={() => {
-                                setGameMode(key);
-                                setSelectGameMode(false);
-                            }}
-                        >{GameNames[key]}</button>
-                    );
-                })}
+                {mobile ? (<div style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    gap: '16px'
+                }}>
+                    <HowToPlayButton mobile={true} onClick={() => props.setModalContent(howToPlayContent)}/>
+                    <OptionsButton mobile={true} onClick={() => props.setModalContent(optionsContent)}/>
+                </div>) : null}
+                <div id='mode-row' style={{
+                    display: 'flex',
+                    flexDirection: 'row'
+                }}>
+                    <Button
+                        className={`btn-solid ${props.scale}`}
+                        style={{flexBasis: '80%', minWidth: '300px'}}
+                        onClick={() => props.setModalContent(howToPlayContent)}
+                    >
+                        {GameNames[mode]}
+                    </Button>
+                    <Button
+                        className={`icon-btn btn-solid ${props.scale}`}
+                        style={{flexBasis: '20%'}}
+                        icon={<ArrowDownOutlined/>}
+                        onClick={() => setSelectGameMode(!selectGameMode)}
+                    />
+                </div>
+                <div style={{
+                    position: 'fixed',
+                    width: document.getElementById('mode-row')?.getBoundingClientRect().width,
+                    left: document.getElementById('mode-row')?.getBoundingClientRect().left,
+                    top: document.getElementById('mode-row')?.getBoundingClientRect().bottom,
+                    zIndex: 2
+                }}>
+                    <div className={`popper ${selectGameMode && 'visible'}`} style={{
+                        flex: '1 0 0',
+                        width: '100%',
+                        backdropFilter: 'blur(30px)'
+                    }}>
+                        {Object.keys(GameNames).map(key => {
+                            return (
+                                <button
+                                    key={key}
+                                    onClick={() => {
+                                        setGameMode(key);
+                                        setSelectGameMode(false);
+                                    }}
+                                >{GameNames[key]}</button>
+                            );
+                        })}
+                    </div>
+                </div>
             </div>
             {GameTypes[mode].modes ? (
                 <div style={{
@@ -364,6 +405,7 @@ const Lobby = (props: Readonly<LobbyProps>) => {
                 {mode in GameTypes && subMode in GameTypes[mode].containers && GameTypes[mode].containers[subMode].map(key => {
                     return <Container
                         key={key}
+                        scale={props.scale}
                         title={key}
                         item={items[key]}
                         setItem={setItem}
@@ -378,12 +420,34 @@ const Lobby = (props: Readonly<LobbyProps>) => {
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'center',
-                marginBottom: '25px'
+                margin: '17px 25px 8px 25px',
+                gap: '16px'
             }}>
-                <ResumeButton visible={props.showResume} onClick={() => props.setShowResume(true)}/>
-                <RightArrowButton label="Start Game" visible={startVisible} onClick={() => initGameData()}/>
+                <Button
+                    className={`btn-solid ${props.scale}`}
+                    style={{
+                        opacity: props.resumeContent ? 1 : 0,
+                        pointerEvents: props.resumeContent ? 'auto' : 'none',
+                        minWidth: props.scale.includes('sm') ? '175px' : '250px'
+                    }}
+                    onClick={() => props.setModalContent(props.resumeContent)}
+                >
+                    Resume
+                </Button>
+                <Button
+                    className={`btn-solid ${props.scale}`}
+                    style={{
+                        opacity: startVisible ? 1 : 0,
+                        pointerEvents: startVisible ? 'auto' : 'none',
+                        minWidth: props.scale.includes('sm') ? '175px' : '250px'
+                    }}
+                    onClick={() => initGameData()}
+                    iconRight={<ArrowRightOutlined/>}
+                >
+                    Start Game
+                </Button>
             </div>
-            <CreditsSection/>
+            {React.createElement(CreditsSection, props)}
         </div>
     </>);
 

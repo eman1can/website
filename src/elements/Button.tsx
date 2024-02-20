@@ -12,7 +12,7 @@ type ButtonProps = {
 
 function Button(props: Readonly<ButtonProps>) {
     return (
-        <button style={props.style} onClick={props.onClick} className={`btn akkurat ${props.className ? props.className : ''}${props.scale ? props.scale : ''}`}>
+        <button style={props.style} onClick={props.onClick} className={`btn akkurat ${props.className ?? ''}${props.scale ?? ''}`}>
             {props.icon ? (<span className="icon">{props.icon}</span>) : null}
             {props.children ? (<span>{props.children}</span>) : null}
             {props.iconRight ? (<span className="icon">{props.iconRight}</span>) : null}

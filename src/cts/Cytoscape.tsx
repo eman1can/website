@@ -1,5 +1,5 @@
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import cytoscape from "cytoscape";
+import cytoscape, {CollectionReturnValue, NodeCollection, NodeSingular} from "cytoscape";
 import d3Force from "cytoscape-d3-force";
 
 import CytoscapeComponent from "react-cytoscapejs";
@@ -19,6 +19,9 @@ import GuideText from "./GuideText";
 import EnterIcon from "../elements/EnterIcon";
 import HowToPlayButton from "../elements/HowToPlayButton";
 import FuzzySet from "fuzzyset";
+import {ModalProps} from "../elements/Modal";
+import getHowToPlayModal from "./HowToPlayModal";
+import {getSuccessModal} from "../elements/SuccessModal";
 
 cytoscape.use(d3Force);
 
@@ -121,7 +124,7 @@ const InstructionHeader = (props: Readonly<InstructionTitleProps>) => {
         justifyContent: 'center',
         marginTop: '15px'
     }}>
-        <h3 className="game-header">
+        <h3 className="game-header  akkurat">
             <Unselectable className="game-header-text">
                 {props.mobile ? 'Connect' : 'Can you connect'}
             </Unselectable>
@@ -148,10 +151,9 @@ const InstructionHeader = (props: Readonly<InstructionTitleProps>) => {
 }
 
 type CytoscapeProps = {
-    data: GameData
     scale: string
-    showHowToPlay: boolean
-    setShowHowToPlay: ((newValue: boolean) => void)
+    data: GameData
+    setModalContent: (newContent: ModalProps | null) => void
     returnToLobby: () => void
 }
 
@@ -161,7 +163,7 @@ const Cytoscape = (props: Readonly<CytoscapeProps>) => {
     const [found, setFound] = useState<Array<string>>(props.data.found);
     const [answers, setAnswers] = useState<Dict<GameType>>(props.data.pool);
     const [alternativeTitles, setAlternativeTitles] = useState<Dict<Array<string>>>(props.data.altTitles);
-    const [bestPath, setBestPath] = useState<number | null>(null);
+    const [bestPath, setBestPath] = useState<{distance: number, path: Array<GameType>} | null>(null);
 
     const [selectedNode, setSelectedNode] = useState<{ id: string, key: string } | null>(null);
     // const [hints, setHints] = useState<Map<string, string>>(new Map());
@@ -213,11 +215,78 @@ const Cytoscape = (props: Readonly<CytoscapeProps>) => {
         };
     });
 
+    function checkSuccess() {
+        if (!cyRef.current)
+            return;
+
+        let distance = Infinity;
+        let path = null;
+        if (props.data.mode === 'detour') {
+            const start = cyRef.current.getElementById(`#${props.data.requires.one}`);
+            const detour = cyRef.current.getElementById(`#${props.data.requires.detour}`);
+            const end = cyRef.current.getElementById(`#${props.data.requires.two}`);
+
+            const dijkstra = cyRef.current.elements().dijkstra({root: start});
+
+            distance = dijkstra.distanceTo(end);
+            path = dijkstra.pathTo(end);
+
+            if (distance !== Infinity && !path.intersection(detour)) {
+                distance = Infinity;
+                path = null;
+            }
+        } else {
+            const nodes = Object.values(props.data.requires).map(k => cyRef.current?.$(`#${k}`));
+
+            const dijkstra = cyRef.current.elements().dijkstra({root: nodes[1]});
+            distance = dijkstra.distanceTo(end);
+            path = dijkstra.pathTo(end);
+
+            if (distance !== Infinity) {
+                console.log(`Path from ${props.data.requires.one} to ${props.data.requires.two} is ${distance}`);
+            } else {
+                console.log(`No path from ${props.data.requires.one} to ${props.data.requires.two}`);
+            }
+        }
+
+        if (distance !== Infinity && path != null) {
+            if (bestPath == null || distance < bestPath.distance) {
+                const newBestPath = path.map(n => answers[n.id()]).filter(o => o);
+                setBestPath({path: newBestPath, distance: distance});
+                /// hide selection
+                props.setModalContent({
+                    ...props,
+                    children: getSuccessModal({
+                        ...props,
+                        path: newBestPath,
+                        hintsUsed: 0,
+                        keywords: {},
+                        confetti: true
+                    }),
+                    onSuccess: () => props.returnToLobby(),
+                    onCancel: () => props.setModalContent(null),
+                    success: 'New Game',
+                    cancel: 'Continue'
+                });
+                cyRef.current.$('edge').data('width', 1).data('lineColor', '#fff');
+                for (let ix = 1; ix < path.length; ix += 2) {
+                    const edgeOnBestPath = path[ix].id();
+                    cyRef.current?.getElementById(edgeOnBestPath).data('width', 5).data('lineColor', '#BCA356');
+                }
+                // for (const [key, value] of Object.entries(hintsUsed)) {
+                //    TODO: Add hint coloring
+                // }
+            }
+        }
+    }
+
     useEffect(() => {
         if (layout && refreshLayout) {
             setTimeout(function () {
-                if (layout)
+                if (layout) {
                     layout.run();
+                    checkSuccess();
+                }
             }, 75);
             setRefreshLayout(false);
         }
@@ -279,7 +348,7 @@ const Cytoscape = (props: Readonly<CytoscapeProps>) => {
                 data: {
                     id: item.id,
                     label: item.name,
-                    image: getProfileImage(item.image, props.mobile ? 'sm' : 'md'),
+                    image: getProfileImage(item.image, mobile ? 'sm' : 'md'),
                     shape: "rectangle",
                     borderColor: "#fff",
                     backgroundColor: "#fff",
@@ -349,16 +418,15 @@ const Cytoscape = (props: Readonly<CytoscapeProps>) => {
         img.onload = () => {
             setSelectedNodeFromOutsideGraph(node.id);
         };
-
-        // Todo: Calculate Best Path
     }
 
     function saveToStorage() {
         const data = props.data;
         data.found = found;
         data.pool = answers;
-        if (bestPath)
+        if (bestPath) {
             data.bestPath = bestPath;
+        }
         localStorage.setItem('game_data', JSON.stringify(data));
     }
 
@@ -464,21 +532,30 @@ const Cytoscape = (props: Readonly<CytoscapeProps>) => {
         }
     }
 
+    const howToPlayContent = {
+        scale: '',
+        children: getHowToPlayModal(),
+        onCancel: () => props.setModalContent(null),
+        onSuccess: () => {
+        },
+        showClose: true
+    };
+
     // TODO: Back to main Menu
     return (<>
         <div style={{position: "absolute", top: 18, left: 18, zIndex: 2}}>
             {<DynamicButton
                 mobile={false}
-                showIcon={props.mobile}
+                showIcon={mobile}
                 icon={<ArrowLeftOutlined/>}
                 label={'Back'}
                 onClick={props.returnToLobby}
             />}
         </div>
         <div style={{position: "absolute", top: 18, right: 18, zIndex: 2}}>
-            {<HowToPlayButton mobile={false} showIcon={props.mobile} onClick={() => props.setShowHowToPlay(true)}/>}
+            {<HowToPlayButton mobile={false} showIcon={mobile} onClick={() => props.setModalContent(howToPlayContent)}/>}
         </div>
-        {props.mobile ? null : (<div style={{position: 'absolute', top: 125, left: 18, zIndex: 2}}>
+        {mobile ? null : (<div style={{position: 'absolute', top: 125, left: 18, zIndex: 2}}>
             {selectedNode && (
                 <SelectedNode
                     selectedNode={selectedNode}
@@ -490,9 +567,9 @@ const Cytoscape = (props: Readonly<CytoscapeProps>) => {
             )}
         </div>)}
         <div style={{height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'stretch'}}>
-            {props.mobile ? null : <LogoHeader/>}
+            {mobile ? null : <LogoHeader/>}
             <InstructionHeader
-                mobile={props.mobile}
+                mobile={mobile}
                 actors={Object.values(props.data.requires).map(k => answers[k])}
                 onClick={key => setSelectedNodeFromOutsideGraph(key)}
             />
@@ -541,7 +618,7 @@ const Cytoscape = (props: Readonly<CytoscapeProps>) => {
                             }}
                         />
                     </div>
-                    {!props.mobile ? <GuideText/> : null}
+                    {!mobile ? <GuideText/> : null}
                 </div>
                 {spellSuggestion ? (<div style={{position: 'relative'}}>
                     <div style={{
@@ -616,11 +693,25 @@ const Cytoscape = (props: Readonly<CytoscapeProps>) => {
                     display: 'flex',
                     flexDirection: 'row',
                     flexWrap: 'wrap',
-                    justifyContent: 'flex-start'
+                    justifyContent: 'flex-start',
                 }}>
                     <div className='stat'>Stars Found: {found.filter(f => f.startsWith('a')).length}</div>
                     <div className='stat'>Films Found: {found.filter(f => f.startsWith('f')).length}</div>
-                    <div className='stat'>Best Path: {bestPath ? bestPath.toString() : '???'}</div>
+                    <div className='stat'>
+                        Best Path: {bestPath ? bestPath.distance : '???'}
+                        {bestPath ? (<Button onClick={() => props.setModalContent({
+                            ...props,
+                            children: getSuccessModal({
+                                ...props,
+                                path: bestPath.path,
+                                hintsUsed: 0,
+                                confetti: false,
+                                keywords: {}
+                            }),
+                            onSuccess: () => {},
+                            onCancel: () => props.setModalContent(null)
+                        })}>?</Button>) : null}
+                    </div>
                 </div>
             </footer>
         </div>

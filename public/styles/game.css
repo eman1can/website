@@ -1,0 +1,27 @@
+.success-modal-section {
+     margin-bottom: 44px;
+}
+
+.success-modal-trophy {
+     margin: 24px 0 30px 0;
+     height: 50px;
+}
+
+/*.success-modal {*/
+/*     background-color: #bca356;*/
+/*}*/
+
+.success-modal-path-text {
+     display: flex;
+     flex-direction: row;
+     justify-content: center;
+     align-items: center;
+}
+
+.success-modal-star {
+     text-align: right;
+}
+
+.success-modal-film {
+     text-align: left;
+}

@@ -1,34 +1,35 @@
 .btn {
     font-family: "Akkurat-Mono", Arial, Helvetica, sans-serif;
     text-transform: uppercase;
+    text-align: center;
     line-height: normal;
     background: transparent;
-    backdrop-filter: blur(10px);
+
     opacity: 1;
     color: #fff;
     border: none;
-}
 
-.sm .btn {
-    font-size: 12px;
-    height: 35px;
-    min-width: 35px;
-}
-
-.md .btn {
-    font-size: 16px;
+    font-size: 14pt;
     height: 40px;
     min-width: 40px;
 }
 
+.sm .btn {
+    font-size: 10pt;
+    height: 35px;
+    min-width: 35px;
+}
+
 .lg .btn {
-    font-size: 16px;
-    height: 40px;
+    font-size: 14pt;
+    min-height: 40px;
+    padding: 0 20px;
     min-width: 40px;
 }
 
 .btn-solid {
     border: 1px solid #fff;
+    backdrop-filter: blur(10px);
     border-radius: 0;
 }
 
@@ -47,9 +48,9 @@
     transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 
-.btn-label {
-    padding: 11px 15px 9px;
-}
+/*.btn-label {*/
+/*    padding: 11px 15px 9px;*/
+/*}*/
 
 .btn > .icon + span {
     margin-left: 8px;

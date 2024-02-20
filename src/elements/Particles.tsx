@@ -11,7 +11,7 @@ const LParticles = (props: {config: string}) => {
     }, []);
 
     const particlesLoaded = useCallback(async (container: Container | undefined) => {
-        await console.log(container);
+        await console.log('Particles Loaded');
     }, []);
 
     return (

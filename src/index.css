@@ -17,8 +17,12 @@
   font-style: normal;
 }
 
-body {
+.body {
   margin: 0;
+  flex-grow: 1;
+  display: block;
+
+  overflow: hidden;
 }
 
 #root {
@@ -27,20 +31,6 @@ body {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  justify-content: stretch;
-  align-items: stretch;
-}
-
-.sm {
-  font-size: 1em;
-}
-
-.md {
-  font-size: 1.25em;
-}
-
-.lg {
-  font-size: 1.5em;
 }
 
 .navbar {

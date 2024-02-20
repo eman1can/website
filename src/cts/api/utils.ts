@@ -10,7 +10,8 @@ export function actorsFromSearchActor(raw: ApiSearchActor): Array<Actor> {
             id: `a${a.id}`,
             name: a.name,
             image: a.profile_path ? a.profile_path : '',
-            popularity: a.popularity
+            popularity: a.popularity,
+            genres: []
         }
     });
 }
@@ -20,7 +21,8 @@ export function filmFromFilmCast(raw: FilmCast): Film {
         id: `f${raw.id}`,
         name: raw.title,
         image: raw.poster_path ? raw.poster_path : '',
-        popularity: raw.popularity
+        popularity: raw.popularity,
+        genres: raw.genre_ids
     };
 }
 
@@ -29,7 +31,8 @@ export function actorFromActorCast(raw: ActorCast): Actor {
         id: `a${raw.id}`,
         name: raw.name,
         image: raw.profile_path ? raw.profile_path : '',
-        popularity: raw.popularity
+        popularity: raw.popularity,
+        genres: []
     };
 }
 
@@ -39,7 +42,8 @@ export function actorFromApiActor(raw: ApiActor): Actor {
         name: raw.name,
         image: raw.profile_path ? raw.profile_path : '',
         popularity: raw.popularity,
-        credits: raw.credits?.cast.filter(shouldFilterFilm).map(c => filmFromFilmCast(c))
+        credits: raw.credits?.cast.filter(shouldFilterFilm).map(c => filmFromFilmCast(c)),
+        genres: []
     };
 }
 
@@ -49,7 +53,8 @@ export function filmFromApiFilm(raw: ApiFilm): Film {
         name: raw.title,
         image: raw.poster_path ? raw.poster_path : '',
         popularity: raw.popularity,
-        credits: raw.credits?.cast.filter(shouldFilterActor).map(c => actorFromActorCast(c))
+        credits: raw.credits?.cast.filter(shouldFilterActor).map(c => actorFromActorCast(c)),
+        genres: raw.genres.map(g => g.id)
     }
 }
 

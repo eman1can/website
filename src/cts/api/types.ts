@@ -4,6 +4,7 @@ export type Actor = {
     image: string
     popularity: number
     credits?: Array<Film>
+    genres: Array<number>
 }
 
 export type Film = {
@@ -12,6 +13,7 @@ export type Film = {
     image: string
     popularity: number
     credits?: Array<Actor>
+    genres: Array<number>
 }
 
 export type AlternativeTitles = {

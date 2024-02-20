@@ -1,13 +1,12 @@
-import React, { KeyboardEvent, useEffect, useState } from "react";
+import React, {KeyboardEvent, useEffect, useState} from "react";
 import CloseIcon from "../elements/CloseIcon";
-import { CircularProgress } from "@mui/joy";
-import { toTitleCase } from "./utils";
-import { ApiSearchActor } from "./api/api_types";
-import { getHeadshot, getProfileImage, loadProfileImage, searchActor, getActor as apiGetActor } from "./api/tmdb";
-import { Dict } from "./types";
-import { Datasets } from "./datasets";
-import { Film, Actor } from "./api/types";
-
+import {CircularProgress} from "@mui/joy";
+import {toTitleCase} from "./utils";
+import {ApiSearchActor} from "./api/api_types";
+import {getHeadshot, getProfileImage, loadProfileImage, searchActor, getActor as apiGetActor} from "./api/tmdb";
+import {Dict} from "./types";
+import {Datasets} from "./datasets";
+import {Film, Actor} from "./api/types";
 
 
 type SearchInputProps = {
@@ -32,7 +31,7 @@ function SearchInput(props: Readonly<SearchInputProps>) {
     }
 
     return <input
-        className="actor-search"
+        className="actor-search akkurat"
         type="text"
         placeholder={props.placeholder}
         onKeyDown={(event) => onKey(event)}
@@ -52,40 +51,19 @@ type ActorSearchProps = {
 
 function ActorSearch(props: Readonly<ActorSearchProps>) {
     return props.data ? (
-        <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'stretch',
-            justifyItems: 'flex-start'
-        }}>
+        <div className="actor-search-container">
             {props.data.map((actor, index) => {
                 return (<button
                     key={actor.id}
-                    className={`${index === props.selected ? 'actor-selected' : 'actor-option'}`}
+                    className={`actor-option ${index === props.selected ? 'actor-selected' : ''}`}
                     onClick={() => props.onSelected(index)}
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyItems: 'flex-start',
-                        padding: '5px 5px 5px 30px'
-                    }}
                 >
                     {props.showProfile ? <img
                         alt="Actor"
                         src={getHeadshot(actor.image ? actor.image : '')}
-                        style={{
-                            borderRadius: '25px',
-                            width: '50px',
-                            height: '50px',
-                            margin: '0 24px 0 0'
-                        }}/> : null}
-                    <div style={{
-                        flexGrow: 1,
-                        textAlign: 'start',
-                        fontFamily: 'Akkurat-Mono',
-                        fontSize: '16px'
-                    }}>{actor.name}</div>
+                        className="actor-headshot"
+                    /> : null}
+                    <div className="actor-name">{actor.name}</div>
                 </button>);
             })}
         </div>
@@ -109,7 +87,7 @@ type ChooseForMeProps = {
 };
 
 function ChooseForMe(props: Readonly<ChooseForMeProps>) {
-    return <button className="choose-for-me" onClick={props.onClick}>Choose For Me</button>;
+    return <button className="choose-for-me akkurat" onClick={props.onClick}>Choose For Me</button>;
 }
 
 type ClearActorProps = {
@@ -157,32 +135,20 @@ const LoadingContainer = () => {
     </div>);
 }
 
-const TitleBar = ({actor}: {actor: Actor | null}) => {
+const TitleBar = ({actor}: { actor: Actor | null }) => {
     if (!actor)
         return null;
-    return (<div style={{
-        flexShrink: 0,
-        padding: '8px 8px 0 8px',
-        textAlign: 'center',
-        fontFamily: 'Playfair-Display',
-        fontSize: '2em'
-    }}>{actor.name}</div>);
+    return (<div className="title-bar playfair">{actor.name}</div>);
 }
 
-const PopularityBar = ({actor}: {actor: Actor | null}) => {
+const PopularityBar = ({actor}: { actor: Actor | null }) => {
     if (!actor)
         return null;
-    return (<div style={{
-        flexShrink: 0,
-        padding: '0 8px 8px 8px',
-        textAlign: 'center',
-        fontFamily: 'Playfair-Display',
-        fontSize: '1.5em',
-        fontVariant: 'small-caps',
-    }}>{`Popularity ${actor.popularity}`}</div>);
+    return (<div className="subtitle-bar playfair">{`Popularity ${actor.popularity}`}</div>);
 }
 
 type ContainerProps = {
+    scale: string
     title: string
     setItem: ((key: string, newItem: Actor | Film | null) => void)
     item: Actor | Film | null
@@ -196,6 +162,8 @@ function Container(props: Readonly<ContainerProps>) {
     const [options, setOptions] = useState<Array<Actor> | null>(null);
     const [selected, setSelected] = useState<number>(-1);
     const [loading, setLoading] = useState<boolean>(false);
+
+    const mobile = props.scale.includes('mobile');
 
     useEffect(() => {
         if (props.item) {
@@ -248,21 +216,22 @@ function Container(props: Readonly<ContainerProps>) {
         });
     }
 
-    return <div className="actor-container">
-        {search ? null : <div className="title">{toTitleCase(props.title)}</div>}
+    return <div className={`actor-container ${props.scale}`}>
+        {search ? null : <div className="title akkurat">{toTitleCase(props.title)}</div>}
         {loading ? <LoadingContainer/> : (<>
             {props.item ? <Background src={getProfileImage(props.item.image, 'lg')}/> :
                 <Background className='placeholder'/>}
-            {options ? <ActorSearch data={options} selected={selected} showProfile={props.showProfile} onSelected={(index: number) => {
-                props.setItem(props.title, options[index]);
-                setOptions(null);
-                setSearch(null);
-            }}/> : null}
+            {options ? <ActorSearch data={options} selected={selected} showProfile={props.showProfile}
+                                    onSelected={(index: number) => {
+                                        props.setItem(props.title, options[index]);
+                                        setOptions(null);
+                                        setSearch(null);
+                                    }}/> : null}
             <div style={{flexGrow: 1}}/>
             <TitleBar actor={props.item}/>
             <PopularityBar actor={props.item}/>
             {props.item ? null : <SearchInput
-                placeholder="Enter a movie star's name"
+                placeholder={mobile ? "Star's Name" : "Enter a movie star's name"}
                 onSubmit={onSearchSubmit}
                 onValue={onSearchValue}
                 changeSelected={changeSelected}

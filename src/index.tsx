@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import 'antd/dist/antd.dark.css';
 
 import {
-    RouterProvider, createBrowserRouter
+    RouterProvider, createHashRouter
 } from "react-router-dom";
 
 import Home from "./pages/Home";
@@ -20,7 +20,7 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
-const router = createBrowserRouter([
+const router = createHashRouter([
     {path: "", element: <Page name="home" root={Home}/>},
     {path: "/blog", element:<Page nav name="blog" root={Blog}/>},
     {path: "/connect-the-stars", element: <Page nav name="cts" root={ConnectTheStars}/>},

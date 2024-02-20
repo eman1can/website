@@ -16,7 +16,7 @@ export function searchActor(query: string): Promise<Array<Actor>> {
         axios.get("https://api.themoviedb.org/3/search/person", {
             params: params
         }).then(r => {
-            if (r.status == 200) {
+            if (r.status === 200) {
                 resolve(actorsFromSearchActor(r.data));
             } else {
                 reject(new Error('Failed to fetch'));
@@ -37,7 +37,7 @@ export function getActor(query: { id: string }, credits?: boolean): Promise<Acto
         axios.get(`https://api.themoviedb.org/3/person/${query.id.substring(1)}`, {
             params: params
         }).then(r => {
-            if (r.status == 200) {
+            if (r.status === 200) {
                 resolve(actorFromApiActor(r.data));
             } else {
                 reject(new Error('Failed to fetch'));
@@ -54,7 +54,7 @@ export function getFilm(query: { id: string }, credits?: boolean): Promise<Film>
         axios.get(`https://api.themoviedb.org/3/movie/${query.id.substring(1)}`, {
             params: params
         }).then(r => {
-            if (r.status == 200) {
+            if (r.status === 200) {
                 resolve(filmFromApiFilm(r.data));
             } else {
                 reject(new Error('Failed to fetch'));
@@ -69,7 +69,7 @@ export function getAlternateTitles(query: { id: string }): Promise<AlternativeTi
         axios.get(`https://api.themoviedb.org/3/movie/${query.id.substring(1)}/alternative_titles`,
             { params: params }
         ).then(r => {
-            if (r.status == 200) {
+            if (r.status === 200) {
                 resolve(alternativeTitlesFromApiAlternativeTitles(r.data));
             } else {
                 reject(new Error('Failed to fetch'));
@@ -101,10 +101,8 @@ export function getProfileImage(query: string, size: string = 'lg'): string {
 
 export function loadProfileImage(query: string): Promise<string> {
     return new Promise((resolve, reject) => {
-        axios.get(getProfileImage(query), {
-
-        }).then(r => {
-            if (r.status == 200) {
+        axios.get(getProfileImage(query)).then(r => {
+            if (r.status === 200) {
                 resolve(r.data);
             } else {
                 reject(new Error('Failed to fetch'));

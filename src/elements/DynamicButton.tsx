@@ -22,6 +22,7 @@ function DynamicButton(props: DynamicButtonProps) {
         className="btn-solid btn-label"
         onClick={props.onClick}
         icon={props.icon}
+        style={{flexGrow: 1}}
     >
         {props.label}
     </Button>);

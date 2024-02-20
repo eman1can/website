@@ -8,15 +8,7 @@ import Modal from "../elements/Modal";
 import { PageContentProps } from "../pages/Page";
 
 const Home = (props: Readonly<PageContentProps>) => {
-
-
-
-
-
     const [showHowToPlay, setShowHowToPlay] = useState(false);
-
-
-
     const [showResume, setShowResume] = useState<boolean>(false);
 
 

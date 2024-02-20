@@ -13,6 +13,8 @@ export type GameData = {
     pool: Dict<GameType>
     altTitles: Dict<Array<string>>
     requires: Dict<string>
-    bestPath?: number
+    bestPath?: {
+        distance: number
+    }
 }
 
