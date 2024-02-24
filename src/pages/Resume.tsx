@@ -1,12 +1,8 @@
-import Navbar from "../elements/Navbar";
+import { PageContentProps } from "./Page";
 
-const Resume = () => {
-    return (
-        <div className="body">
-            <Navbar/>
-            <div style={{height: '55px'}}/>
-        </div>
-    );
+const Resume = (props: Readonly<PageContentProps>) => {
+    const mobile = props.scale.startsWith('mobile');
+    return <div>Empty Page</div>;
 }
 
 export default Resume;

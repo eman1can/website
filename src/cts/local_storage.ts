@@ -1,43 +1,38 @@
 import {useEffect, useState} from "react";
+import { Dict } from "./types";
+
+function readLocalStorage<S>(key: string, defaultValue: S): S {
+    const local: string | null = localStorage.getItem(key);
+    if (!local)
+        return defaultValue;
+    return JSON.parse(local);
+}
 
 function useLocalStorage<S>(key: string, initialState: S): [S, ((newValue: S) => void)] {
-    const [value, setValue] = useState(initialState);
+    const defaultValue = readLocalStorage<S>(key, initialState);
 
-    // Read in the value from local storage
-    useEffect(() => {
-        const local: string | null = localStorage.getItem(key);
-        console.log(`Read ${key} from local storage`, local);
-        if (local) {
-            switch (typeof initialState) {
-                case "string":
-                    // @ts-ignore
-                    setValue(local);
-                    break;
-                case "boolean":
-                    // @ts-ignore
-                    setValue(local === "true" ?? false);
-                    break;
-                case "number":
-                    // @ts-ignore
-                    setValue(Number(local));
-                    break;
-                default:
-                    setValue(JSON.parse(local));
-            }
-        }
-    }, [key, setValue, initialState]);
+    const [value, setValue] = useState<S>(defaultValue);
 
     function dispatch(newValue: S) {
-        if (typeof initialState === "object") {
-            localStorage.setItem(key, JSON.stringify(newValue));
-        } else {
-            localStorage.setItem(key, `${newValue}`);
-        }
-        console.log(`Write ${key} to local storage`, newValue);
+        localStorage.setItem(key, JSON.stringify(newValue));
         setValue(newValue);
     }
 
     return [value, dispatch];
 }
 
+function readManyLocalStorage<S>(keys: Array<string>): Dict<S> {
+    const value: Dict<S> = {};
+
+    keys.forEach(k => {
+        const local: string | null = localStorage.getItem(k);
+        console.log('Read Local Value', k, local);
+        if (local)
+            value[k] = JSON.parse(local);
+    });
+
+    return value;
+}
+
 export default useLocalStorage;
+export {readLocalStorage, readManyLocalStorage};

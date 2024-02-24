@@ -1,25 +1,27 @@
 import React from "react";
-import {Button} from "antd";
 
 type UnselectableProps = {
-    style?: object,
+    className?: string
+    style?: object
     children?: any
 }
 
-function Unselectable(props: UnselectableProps) {
+function Unselectable(props: Readonly<UnselectableProps>) {
     return (
-        <Button
-            type="link"
+        <button
+            className={props.className}
             tabIndex={-1}
             style={{
                 height: "100%",
                 whiteSpace: "normal",
                 cursor: "default",
+                border: 'none',
+                background: 'transparent',
                 ...props.style
             }}
         >
             {props.children}
-        </Button>
+        </button>
     );
 }
 

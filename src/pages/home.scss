@@ -4,19 +4,19 @@ $black: #333333;
 $blue: #7aadff;
 $purple: #a95cfa;
 
-.title-btn {
+.home-title-btn {
   position: relative;
   text-transform: uppercase;
-  letter-spacing: 0.25em;
   font-family: "Akkurat-Mono", sans-serif;
-  margin: 1rem 2rem;
   border: 0;
-  padding: 1rem 2.5rem;
   background: transparent;
   outline: none;
-  font-size: 60px;
   color: $white;
   z-index: 2;
+  letter-spacing: 0.25em;
+  margin: 1rem 2rem;
+  padding: 1rem 2.5rem;
+  font-size: 60px;
 
   &::after,
   &::before {
@@ -36,7 +36,7 @@ $purple: #a95cfa;
   &::after {
     background-color: $purple;
     top: 1rem;
-    left: 20rem;
+    left: 50%;
   }
   &:hover {
     &::before,
@@ -48,7 +48,17 @@ $purple: #a95cfa;
       left: 0rem;
     }
     &::before {
-      left: 20rem;
+      left: 50%;
     }
   }
+}
+
+.home-title-btn.sm {
+  margin-top: 2rem;
+  font-size: 24px;
+}
+
+.home-title-btn.lg {
+  margin-top: 3rem;
+  font-size: 60px;
 }

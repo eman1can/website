@@ -9,7 +9,7 @@ type ModalRowProps = {
     title?: string,
     heading?: string,
     maxWidth?: number,
-    body?: string,
+    body?: string
 };
 
 function ModalRow(props: ModalRowProps) {

@@ -2,6 +2,7 @@ import React from "react";
 import Button from "../elements/Button";
 
 type DynamicButtonProps = {
+    id?: string
     mobile: boolean,
     showIcon?: boolean,
     icon: React.JSX.Element,
@@ -12,16 +13,18 @@ type DynamicButtonProps = {
 function DynamicButton(props: DynamicButtonProps) {
     if (!props.mobile && props.showIcon) {
         return (<Button
-            className="icon-btn btn-on-stars"
+            className="btn-solid"
             onClick={props.onClick}
             icon={props.icon}
         />);
     }
 
     return (<Button
-        className="btn-on-stars"
+        id={props.id}
+        className="btn-solid btn-label"
         onClick={props.onClick}
         icon={props.icon}
+        style={{flexGrow: 1, width: '222px'}}
     >
         {props.label}
     </Button>);
