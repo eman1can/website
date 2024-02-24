@@ -1,8 +1,9 @@
 import { find } from "../utils";
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { useScale } from "../scale";
 import Navbar from "../elements/Navbar";
-import Modal, {ModalProps} from "../elements/Modal";
+import Modal, { ModalProps } from "../elements/Modal";
+
 
 export type PageContentProps = {
     scale: string

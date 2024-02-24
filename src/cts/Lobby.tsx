@@ -1,33 +1,47 @@
-import {InfoCircleFilled, ArrowDownOutlined, ArrowRightOutlined} from "@ant-design/icons";
-import {find} from "../utils";
-import OptionsModal from "./OptionsModal";
-import React, {useCallback, useEffect, useState} from "react";
-import useLocalStorage from "./local_storage";
-import Unselectable from '../elements/Unselectable';
+import { ArrowDownOutlined, ArrowRightOutlined, InfoCircleFilled, UploadOutlined } from "@ant-design/icons";
+import React, { useCallback, useEffect, useState } from "react";
+import useLocalStorage, { readLocalStorage } from "./local_storage";
 import Button from "../elements/Button";
-import {GameNames, GameTypes, SubTitles} from "./games";
 import Container from "./Container";
-import {GameData, Dict, GameType} from "./types";
-import {Actor, AlternativeTitles, Film} from "./api/types";
+import { GameData, Dict, GameType } from "./types";
+import { Actor, AlternativeTitles, Film } from "./api/types";
 import CreditsSection from "./CreditsSection";
-import CloseIcon from "../elements/CloseIcon";
-import {useLocation, useNavigate} from "react-router-dom";
-import {getData as apiGetData, getAlternateTitles as apiGetAlternativeTitles} from "./api/tmdb";
-import {filterActors} from "./api/utils";
+import { useLocation, useNavigate } from "react-router-dom";
+import { getData as apiGetData, getAlternateTitles as apiGetAlternativeTitles } from "./api/tmdb";
+import { filterActors } from "./api/utils";
 import HowToPlayButton from "../elements/HowToPlayButton";
 import OptionsButton from "../elements/OptionsButton";
-import RightArrowButton from "../elements/RightArrowButton";
-import {ModalProps} from "../elements/Modal";
-import getHowToPlayModal from "./HowToPlayModal";
-import getOptionsModal from "./OptionsModal";
+import { ModalProps } from "../elements/Modal";
+import StatsButton from "../elements/StatsButton";
+import LogoHeader from "../elements/LogoHeader";
+import { LANGUAGE_NAMES, SUBTITLE_COUNT, useLanguage } from "../lang";
+import Upload from "../elements/Upload";
+import { showAlert } from "./utils";
+import LanguageButton from "../elements/LanguageButton";
+import Popper from "../elements/Popper";
 
+const GameTypes: { [key: string]: { default: string, modes?: string[], containers: { [key: string]: string[] } } } = {
+    // Connect two actors together
+    classic: {default: '', containers: {'': ['one', 'two']}},
+    // Connect two actors through a third actor
+    detour: {default: '', containers: {'': ['one', 'detour', 'two']}},
+    // Connect two actors, with a popularity below a threshold or a person
+    rising: {
+        default: 'Value',
+        modes: ['Value', 'Person'],
+        containers: {Value: ['one', 'two'], Person: ['one', 'two', 'max']}
+    },
+    // Connect up to six stars together
+    web: {default: '', containers: {'': ['one', 'two', 'three', 'four', 'five', 'six']}}
+}
 
 export type LobbyProps = {
     scale: string
     setModalContent: (newContent: ModalProps | null) => void
-    resumeContent: ModalProps | null
-    setGameData: (newData: GameData) => void
+    setGameData: (newData: GameData | null) => void
 }
+
+// TODO: Only accept url params for the correct game mode
 
 const Lobby = (props: Readonly<LobbyProps>) => {
     const mobile = props.scale.startsWith('mobile');
@@ -35,21 +49,19 @@ const Lobby = (props: Readonly<LobbyProps>) => {
     const {pathname, search} = useLocation();
     const navigate = useNavigate();
 
+    const [currentLanguage, setLanguage, getString] = useLanguage();
+    const [selectLanguage, setSelectLanguage] = useState<boolean>(false);
+
+    const [resumeData, setResumeData] = useLocalStorage<GameData | null>('game_data', null);
+
     const [selectGameMode, setSelectGameMode] = useState<boolean>(false);
     const [mode, setMode] = useState<string>('classic');
     const [subMode, setSubMode] = useState<string>('');
 
-    const [subtitle, setSubtitle] = useState<string>(SubTitles[Math.floor(Math.random() * SubTitles.length)]);
-    const [startVisible, setStartVisible] = useState<boolean>(false);
 
-    const [useStandard, setUseStandard] = useLocalStorage<boolean>('use_default', true);
-    const [useExpanded, setUseExpanded] = useLocalStorage<boolean>('use_expanded', false);
-    const [useBollywood, setUseBollywood] = useLocalStorage<boolean>('use_bollywood', false);
-    const [useBlockbuster, setUseBlockbuster] = useLocalStorage<boolean>('use_blockbuster', false);
-    const [allowMovieSeries, setAllowMovieSeries] = useLocalStorage<boolean>('allow_movie_series', true);
-    const [allowTVSeries, setAllowTVSeries] = useLocalStorage<boolean>('allow_tv_series', false);
-    const [allowHints, setAllowHints] = useLocalStorage<boolean>('use_hints', false);
-    const [disableProfile, setDisableProfile] = useLocalStorage<boolean>('disable_profile', false);
+
+    const [subtitle, setSubtitle] = useState<number>(Math.floor(Math.random() * SUBTITLE_COUNT));
+    const [startVisible, setStartVisible] = useState<boolean>(false);
 
     const [items, setItems] = useState<Dict<GameType | null>>({});
 
@@ -57,7 +69,6 @@ const Lobby = (props: Readonly<LobbyProps>) => {
         if (mode in GameTypes && subMode in GameTypes[mode].containers) {
             let valid = true;
             for (const key of GameTypes[mode].containers[subMode]) {
-                console.log(mode, subMode, key, items[key]);
                 valid &&= items[key] !== null && items[key] !== undefined;
             }
             return valid;
@@ -70,16 +81,15 @@ const Lobby = (props: Readonly<LobbyProps>) => {
         const current = items;
 
         current[key] = item;
-
-        if (item) {
-            params.set(key, item.id);
-        } else {
-            params.delete(key);
-        }
-
         setItems(current);
 
-        navigate(`${pathname}?${params.toString()}`, {replace: true});
+        if (item && params.get(key) !== item.id) {
+            params.set(key, item.id);
+            navigate(`${pathname}?${params.toString()}`, {replace: true});
+        } else if (!item && params.has(key)) {
+            params.delete(key);
+            navigate(`${pathname}?${params.toString()}`, {replace: true});
+        }
 
         setStartVisible(isValid());
     }, [isValid, items, navigate, pathname, search]);
@@ -87,39 +97,77 @@ const Lobby = (props: Readonly<LobbyProps>) => {
     // Read the starting url params
     useEffect(() => {
         const params = new URLSearchParams(search);
+
+        const paramMode = params.get('mode');
+        if (paramMode && paramMode !== mode)
+            setMode(paramMode);
+
+        const paramSubMode = params.get('sub-mode');
+        if (paramSubMode && paramSubMode !== subMode && paramSubMode in GameTypes[mode].containers)
+            setSubMode(paramSubMode);
+
         params.forEach((value, key) => {
-            if (key === 'mode') {
-                if (value !== mode)
-                    setMode(value);
-            } else if (key === 'sub-mode') {
-                if (value !== subMode)
-                    setSubMode(value);
-            } else if (!items[key] || items[key]?.id !== value) {
-                apiGetData({id: value}).then(item => setItem(key, item));
+            if (key !== 'mode' && key !== 'sub-mode') {
+                if (GameTypes[mode].containers[subMode].includes(key)) {
+                    if (!items[key] || items[key]?.id !== value) {
+                        apiGetData({id: value}).then(item => setItem(key, item));
+                    }
+                } else {
+                    params.delete(key);
+                }
             }
         });
+
+        navigate(`${pathname}?${params.toString()}`, {replace: true});
 
         setStartVisible(isValid());
     }, [search, mode, subMode, items, isValid, setItem]);
 
+    function getResumeContent(data: GameData) {
+        return {
+            scale: '',
+            modalName: 'cts_Resume',
+            getString: getString,
+            onCancel: () => {
+                props.setGameData(null);
+                setResumeData(null);
+                props.setModalContent(null);
+            },
+            onSuccess: () => {
+                props.setGameData(data);
+                props.setModalContent(null);
+            },
+            onClose: () => {
+                props.setModalContent(null);
+            },
+            success: 'Resume',
+            cancel: 'Discard',
+            showClose: true
+        };
+    }
+
     function setGameMode(newMode: string) {
         const params = new URLSearchParams(search);
         const current = items;
+        const newSubMode = GameTypes[newMode].default;
 
+        const newKeys = GameTypes[newMode].containers[newSubMode];
         for (const key of Object.keys(current)) {
-            params.delete(key);
-            current[key] = null;
+            if (!newKeys.includes(key)) {
+                params.delete(key);
+                current[key] = null;
+            }
         }
 
         setItems(current);
-
         setMode(newMode);
         params.set('mode', newMode);
 
-        const newSubMode = GameTypes[newMode].default;
         setSubMode(newSubMode);
         if (newSubMode !== '')
             params.set('sub-mode', newSubMode);
+        else
+            params.delete('sub-mode');
 
         navigate(`${pathname}?${params.toString()}`, {replace: true});
 
@@ -141,8 +189,8 @@ const Lobby = (props: Readonly<LobbyProps>) => {
     }
 
     function cycleSubtitle() {
-        const ix = (SubTitles.indexOf(subtitle) + 1) % SubTitles.length;
-        setSubtitle(SubTitles[ix]);
+        const ix = (subtitle + 1) % SUBTITLE_COUNT;
+        setSubtitle(ix);
     }
 
     function initGameData() {
@@ -197,173 +245,140 @@ const Lobby = (props: Readonly<LobbyProps>) => {
         return filterActors(r, s, Object.values(items).flatMap(c => c ? [c.id] : []));
     }
 
-    function getOptions(): Dict<boolean> {
-        return {
-            default: useStandard,
-            expanded: useExpanded,
-            bollywood: useBollywood,
-            blockbuster: useBlockbuster
-        }
-    }
-
-    const numSelected = [useStandard, useExpanded, useBollywood, useBlockbuster].filter(v => v).length;
-
     const howToPlayContent = {
         scale: '',
-        children: getHowToPlayModal(),
+        modalName: 'cts_HowToPlay',
+        getString: (s: string) => s,
         onCancel: () => props.setModalContent(null),
         onSuccess: () => {
         },
         showClose: true
     };
 
-    const options = [
-        {loc: 'Gameplay', title: 'Allow In-Game Hints', state: allowHints, toggle: setAllowHints},
-        {loc: 'Gameplay', title: 'Allow Movie in a Series', state: allowMovieSeries, toggle: setAllowMovieSeries},
-        {loc: 'Gameplay', title: 'Allow TV Shows', state: allowTVSeries, toggle: setAllowTVSeries},
-        {loc: 'Gameplay', title: 'Disable Profile Pictures', state: disableProfile, toggle: setDisableProfile},
-        {
-            loc: 'Choose For Me',
-            title: 'Use default actors',
-            state: useStandard,
-            toggle: setUseStandard,
-            disabled: useStandard && numSelected === 1
-        },
-        {
-            loc: 'Choose For Me',
-            title: 'Use expanded actors',
-            state: useExpanded,
-            toggle: setUseExpanded,
-            disabled: useExpanded && numSelected === 1
-        },
-        {
-            loc: 'Choose For Me',
-            title: 'Use Bollywood actors',
-            state: useBollywood,
-            toggle: setUseBollywood,
-            disabled: useBollywood && numSelected === 1
-        },
-        {
-            loc: 'Choose For Me',
-            title: 'Use pre-blockbuster actors',
-            state: useBlockbuster,
-            toggle: setUseBlockbuster,
-            disabled: useBlockbuster && numSelected === 1
-        }
-    ];
-
     const optionsContent = {
         scale: '',
-        children: getOptionsModal(options),
+        modalName: 'cts_Options',
+        getString: getString,
         onCancel: () => props.setModalContent(null),
         onSuccess: () => {
         },
         showClose: true
     }
 
+    const hasStatistics = readLocalStorage('historical_data', null) !== null;
+    const statisticContent = {
+        scale: '',
+        modalName: 'cts_Statistic',
+        getString: getString,
+        onCancel: () => props.setModalContent(null),
+        onSuccess: () => {
+        },
+        showClose: true
+    }
+
+    console.log(currentLanguage, LANGUAGE_NAMES)
+    // TODO: Add Language dropdown
+    // TODO: Fix Sub Mode Selection & Add threshold selection
+    // TODO: Add challenge menu
     return (<>
-        <div style={{position: "fixed", left: 18, zIndex: 2, marginTop: 18}}>
-            {mobile ? null : <HowToPlayButton mobile={false} onClick={() => props.setModalContent(howToPlayContent)}/>}
-        </div>
+        {/*<div style={{position: "fixed", left: 18, zIndex: 2, marginTop: 18}}>*/}
+        {/*    {mobile ? null : <HowToPlayButton mobile={false} onClick={() => props.setModalContent(howToPlayContent)}/>}*/}
+        {/*</div>*/}
         <div style={{position: "fixed", right: 18, zIndex: 2, marginTop: 18}}>
             {mobile ? null : <OptionsButton mobile={false} onClick={() => props.setModalContent(optionsContent)}/>}
+        </div>
+        {/*{hasStatistics ? (<div style={{position: "fixed", left: 18, zIndex: 2, marginTop: 76}}>*/}
+        {/*    {mobile ? null : <StatsButton mobile={false} onClick={() => props.setModalContent(statisticContent)}/>}*/}
+        {/*</div>) : null}*/}
+        <div style={{position: "fixed", left: 18, zIndex: 2, marginTop: 18}}>
+            {mobile ? null : <LanguageButton mobile={false} current={LANGUAGE_NAMES[currentLanguage]} onClick={() => setSelectLanguage(!selectLanguage)}/>}
+            <Popper anchor="language-button" visible={selectLanguage} content={(<>
+                {Object.entries(LANGUAGE_NAMES).map(([key, value]) => {
+                    return (
+                        <button
+                            key={key}
+                            onClick={() => {
+                                setLanguage(key);
+                                setSelectLanguage(false);
+                            }}
+                            disabled={currentLanguage === key}
+                        >{value}</button>
+                    );
+                })}
+            </>)}/>
         </div>
         <div style={{
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center'
+            alignItems: 'stretch',
+            justifyContent: 'center',
+            flexGrow: 1,
         }}>
-            <div style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginTop: '15px'
-            }}>
-                <Unselectable style={{padding: 0}}>
-                    <img
-                        className="unselectable"
-                        src={find('assets/cts', 'logo.png')}
-                        alt="Logo"
-                        style={{width: 56}}
-                    />
-                </Unselectable>
-                <Unselectable style={{padding: 0}}>
-                    <h1
-                        className="unselectable playfair"
-                        style={{
-                            color: "#fff",
-                            marginBottom: 0,
-                            marginLeft: '12px'
-                        }}
-                    >
-                        Connect the Stars
-                    </h1>
-                </Unselectable>
-            </div>
+            <LogoHeader title={getString('lobby.title')}/>
             {!mobile ? (
                 <div style={{
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    marginBottom: '20px'
+                    // marginBottom: '20px'
                 }}>
                     <Button onClick={(() => cycleSubtitle())} style={{
                         border: '0px solid white',
                         fontVariant: 'small-caps',
                         textTransform: 'capitalize',
                         fontSize: '20px'
-                    }}>— {subtitle} —</Button>
+                    }}>— {getString(`lobby.subtitle${subtitle}`)} —</Button>
                 </div>
             ) : null}
             <div style={{
                 display: 'flex',
-                flexDirection: 'column',
-                margin: '25px',
-                gap: '16px',
-                maxWidth: '500px',
-                minWidth: props.scale.includes('sm') ? '175px' : '250px'
+                flexDirection: 'row',
+                justifyContent: 'center'
             }}>
-                {mobile ? (<div style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    gap: '16px'
-                }}>
-                    <HowToPlayButton mobile={true} onClick={() => props.setModalContent(howToPlayContent)}/>
-                    <OptionsButton mobile={true} onClick={() => props.setModalContent(optionsContent)}/>
-                </div>) : null}
-                <div id='mode-row' style={{
-                    display: 'flex',
-                    flexDirection: 'row'
-                }}>
-                    <Button
-                        className={`btn-solid ${props.scale}`}
-                        style={{flexBasis: '80%', minWidth: '300px'}}
-                        onClick={() => props.setModalContent(howToPlayContent)}
-                    >
-                        {GameNames[mode]}
-                    </Button>
-                    <Button
-                        className={`icon-btn btn-solid ${props.scale}`}
-                        style={{flexBasis: '20%'}}
-                        icon={<ArrowDownOutlined/>}
-                        onClick={() => setSelectGameMode(!selectGameMode)}
-                    />
-                </div>
                 <div style={{
-                    position: 'fixed',
-                    width: document.getElementById('mode-row')?.getBoundingClientRect().width,
-                    left: document.getElementById('mode-row')?.getBoundingClientRect().left,
-                    top: document.getElementById('mode-row')?.getBoundingClientRect().bottom,
-                    zIndex: 2
+                    display: 'flex',
+                    flexDirection: 'column',
+                    margin: '25px',
+                    gap: '16px',
+                    maxWidth: '500px',
+                    minWidth: props.scale.includes('sm') ? '175px' : '250px'
                 }}>
-                    <div className={`popper ${selectGameMode && 'visible'}`} style={{
-                        flex: '1 0 0',
-                        width: '100%',
-                        backdropFilter: 'blur(30px)'
+                    {mobile ? (<div style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        gap: '16px'
                     }}>
-                        {Object.keys(GameNames).map(key => {
+                        {/*<HowToPlayButton mobile={true} onClick={() => props.setModalContent(howToPlayContent)}/>*/}
+                        {/*<LanguageButton mobile={true} current={currentLanguage} onClick={() => props.setModalContent(statisticContent)}/>*/}
+                        <OptionsButton mobile={true} onClick={() => props.setModalContent(optionsContent)}/>
+                    </div>) : null}
+                    {hasStatistics ? (<div style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                    }}>
+                        <StatsButton mobile={true} onClick={() => props.setModalContent(statisticContent)}/>
+                    </div>) : null}
+                    <div id='mode-row' style={{
+                        display: 'flex',
+                        flexDirection: 'row'
+                    }}>
+                        <Button
+                            className={`btn-solid ${props.scale}`}
+                            style={{flexBasis: '80%', minWidth: '300px'}}
+                            icon={<InfoCircleFilled/>}
+                            onClick={() => props.setModalContent(howToPlayContent)}
+                        >
+                            {getString(`mode.${mode}`)}
+                        </Button>
+                        <Button
+                            className={`icon-btn btn-solid ${props.scale}`}
+                            style={{flexBasis: '20%'}}
+                            icon={<ArrowDownOutlined/>}
+                            onClick={() => setSelectGameMode(!selectGameMode)}
+                        />
+                    </div>
+                    <Popper anchor="mode-row" visible={selectGameMode} content={(<>
+                        {Object.keys(GameTypes).map(key => {
                             return (
                                 <button
                                     key={key}
@@ -371,10 +386,10 @@ const Lobby = (props: Readonly<LobbyProps>) => {
                                         setGameMode(key);
                                         setSelectGameMode(false);
                                     }}
-                                >{GameNames[key]}</button>
+                                >{getString(`mode.${key}`)}</button>
                             );
                         })}
-                    </div>
+                    </>)}/>
                 </div>
             </div>
             {GameTypes[mode].modes ? (
@@ -391,27 +406,34 @@ const Lobby = (props: Readonly<LobbyProps>) => {
                         onClick={() => cycleSubMode()}
                         style={{flexGrow: 1}}
                     >
-                        {GameNames[`${mode}_${subMode}`]}
+                        {getString(`mode.${subMode}`)}
                     </Button>
                 </div>
             ) : null}
             <div style={{
                 display: 'flex',
                 flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexWrap: 'wrap'
-            }}>
-                {mode in GameTypes && subMode in GameTypes[mode].containers && GameTypes[mode].containers[subMode].map(key => {
+                flexGrow: 1,
+                alignItems: 'stretch',
+                justifyContent: 'safe center',
+                maxHeight: '600px',
+                maxWidth: '100%',
+                overflowX: 'auto',
+                margin: '0 25px',
+                gap: '25px'
+            }} className="sleek-scroll">
+                {mode in GameTypes && subMode in GameTypes[mode].containers && GameTypes[mode].containers[subMode].map((key, ix) => {
+                    const keys = GameTypes[mode].containers[subMode];
+                    if (mode === 'web' && ix > 1 && keys.slice(ix - 1).map(k => items[k]).filter(o => o).length == 0)
+                        return null;
                     return <Container
                         key={key}
+                        getString={getString}
                         scale={props.scale}
-                        title={key}
+                        title={getString(`container.${key}`)}
                         item={items[key]}
                         setItem={setItem}
-                        showProfile={!disableProfile}
                         filter={filterSearch}
-                        getOptions={getOptions}
                     />;
                 })}
             </div>
@@ -423,38 +445,60 @@ const Lobby = (props: Readonly<LobbyProps>) => {
                 margin: '17px 25px 8px 25px',
                 gap: '16px'
             }}>
+                <Upload id="upload-input" accept="application/json" onSuccess={data => {
+                    const parsedData = JSON.parse(data);
+                    setResumeData(parsedData);
+                    localStorage.setItem('game_data', data);
+                    props.setModalContent(getResumeContent(parsedData));
+                }} onError={() => {
+                    showAlert('copied', 'Failed to upload file', <div/>);
+                }}/>
                 <Button
                     className={`btn-solid ${props.scale}`}
                     style={{
-                        opacity: props.resumeContent ? 1 : 0,
-                        pointerEvents: props.resumeContent ? 'auto' : 'none',
-                        minWidth: props.scale.includes('sm') ? '175px' : '250px'
+                        flexGrow: 1,
+                        flexBasis: '25%',
+                        maxWidth: '222px'
+                        // minWidth: props.scale.includes('sm') ? '175px' : '250px'
                     }}
-                    onClick={() => props.setModalContent(props.resumeContent)}
+                    icon={resumeData ? <div/> : <UploadOutlined/>}
+                    onClick={() => {
+                        if (resumeData) {
+                            props.setModalContent(getResumeContent(resumeData))
+                        } else {
+                            const upload = document.getElementById('upload-input') as HTMLInputElement;
+                            if (upload) {
+                                upload.click();
+                            }
+                        }
+                    }}
                 >
-                    Resume
+                    {resumeData ? getString('lobby.resume') : getString('lobby.load')}
                 </Button>
                 <Button
                     className={`btn-solid ${props.scale}`}
                     style={{
                         opacity: startVisible ? 1 : 0,
                         pointerEvents: startVisible ? 'auto' : 'none',
-                        minWidth: props.scale.includes('sm') ? '175px' : '250px'
+                        flexGrow: 1,
+                        flexBasis: '25%',
+                        maxWidth: '222px'
+                        // minWidth: props.scale.includes('sm') ? '175px' : '250px'
                     }}
                     onClick={() => initGameData()}
                     iconRight={<ArrowRightOutlined/>}
                 >
-                    Start Game
+                    {getString('lobby.start')}
                 </Button>
             </div>
-            {React.createElement(CreditsSection, props)}
+            {React.createElement(CreditsSection, {...props, getString: getString})}
         </div>
     </>);
 
-    // TODO: ADD RIPPLE
     // TODO: Credits Section - Finish SVGs and styles
     // TODO: Fix container sizing and scrolling on differing screen sizes
     // TODO: Crate HELP Sections for each game
+    // TOD: Fix overlay on resume game
 }
 
 export default Lobby;

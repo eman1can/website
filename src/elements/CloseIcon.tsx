@@ -5,7 +5,7 @@ type CloseIconProps = {
 }
 
 const CloseIcon = ({variant}: CloseIconProps) => {
-    return <img alt="Close" src={find('assets/cts/icon', variant === "dark" ? 'close_black.svg' : 'close.svg')}/>;
+    return <img alt="Close" style={{width: '100%', height: '100%'}} src={find('assets/cts/icon', variant === "dark" ? 'close_black.svg' : 'close.svg')}/>;
 }
 
 export default CloseIcon;

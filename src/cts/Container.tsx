@@ -7,6 +7,7 @@ import {getHeadshot, getProfileImage, loadProfileImage, searchActor, getActor as
 import {Dict} from "./types";
 import {Datasets} from "./datasets";
 import {Film, Actor} from "./api/types";
+import { readLocalStorage, readManyLocalStorage } from "./local_storage";
 
 
 type SearchInputProps = {
@@ -78,36 +79,38 @@ type BackgroundProps = {
 function Background({src, className}: Readonly<BackgroundProps>) {
     let style = {};
     if (src)
-        style = {backgroundImage: `linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0), rgb(0, 0, 0)), url(${src})`}
+        style = {backgroundImage: `url(${src})`};// `linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0), rgb(0, 0, 0)), `}
     return <div className={`${className ?? "background"}`} style={style}/>;
 }
 
 type ChooseForMeProps = {
+    title: string
     onClick: (() => void)
 };
 
 function ChooseForMe(props: Readonly<ChooseForMeProps>) {
-    return <button className="choose-for-me akkurat" onClick={props.onClick}>Choose For Me</button>;
+    return <button className="choose-for-me akkurat" onClick={props.onClick}>{props.title}</button>;
 }
 
 type ClearActorProps = {
+    title: string
     onClick: (() => void)
 };
 
 function ClearActor(props: Readonly<ClearActorProps>) {
-    return (<button className="btn clear-actor" onClick={props.onClick}>
-        <span className="icon">
+    return (<button className="btn clear-actor" onClick={props.onClick} style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+        <div className="icon" style={{width: '20px', height: '20px', marginRight: '25px'}}>
             <CloseIcon variant="dark"/>
-        </span>
-        <span>Clear</span>
+        </div>
+        <div style={{textAlign: 'center'}}>{props.title}</div>
     </button>);
 }
 
 function getRandomActor(options: Dict<boolean>): Promise<Actor> {
     let ids: Array<number> = [];
-    for (const key of Object.keys(Datasets)) {
+    for (const [key, value] of Object.entries(Datasets)) {
         if (options[key])
-            ids = ids.concat(Datasets[key]);
+            ids = ids.concat(value);
     }
 
     const ix = Math.floor(Math.random() * ids.length);
@@ -135,28 +138,31 @@ const LoadingContainer = () => {
     </div>);
 }
 
-const TitleBar = ({actor}: { actor: Actor | null }) => {
+const ActorInfo = ({actor, getString}: { actor: Actor | null, getString: (key: string) => string }) => {
     if (!actor)
         return null;
-    return (<div className="title-bar playfair">{actor.name}</div>);
-}
-
-const PopularityBar = ({actor}: { actor: Actor | null }) => {
-    if (!actor)
-        return null;
-    return (<div className="subtitle-bar playfair">{`Popularity ${actor.popularity}`}</div>);
+    return (<div style={{
+        flex: '0 0 0',
+        display: 'flex',
+        flexDirection: 'column',
+        marginTop: '20px'
+    }} className="actor-info playfair">
+        <div className="title-bar playfair">{actor.name}</div>
+        <div className="subtitle-bar playfair">{`${getString('container.popularity')} ${actor.popularity}`}</div>
+    </div>);
 }
 
 type ContainerProps = {
     scale: string
     title: string
+    getString: (key: string) => string
     setItem: ((key: string, newItem: Actor | Film | null) => void)
     item: Actor | Film | null
-    showProfile: boolean
-    filter: ((r: Array<Actor | Film>, s: string) => Array<Actor | Film> | null),
-    getOptions: (() => Dict<boolean>)
+    filter: ((r: Array<Actor | Film>, s: string) => Array<Actor | Film> | null)
 }
 
+// TODO: Make Non-profile display uniform
+// TODO: Fix highlighting movement
 function Container(props: Readonly<ContainerProps>) {
     const [search, setSearch] = useState<string | null>(null);
     const [options, setOptions] = useState<Array<Actor> | null>(null);
@@ -164,11 +170,14 @@ function Container(props: Readonly<ContainerProps>) {
     const [loading, setLoading] = useState<boolean>(false);
 
     const mobile = props.scale.includes('mobile');
+    const disableProfile = readLocalStorage('disable_profile', false);
 
     useEffect(() => {
         if (props.item) {
-            setLoading(true);
-            loadProfileImage(props.item.image).then(() => setLoading(false));
+            // TODO: Make loading wait for canvas load event
+            // https://stackoverflow.com/questions/22788782/wait-for-background-images-in-css-to-be-fully-loaded
+            setLoading(false);
+            // loadProfileImage(props.item.image).then(() => setLoading(false));
         }
     }, [props.item]);
 
@@ -212,32 +221,31 @@ function Container(props: Readonly<ContainerProps>) {
         setLoading(true);
 
         new Promise(resolve => setTimeout(resolve, 10)).then(() => {
-            getRandomActor(props.getOptions()).then(actor => props.setItem(props.title, actor));
+            const datasetOptions: Dict<boolean> = readManyLocalStorage<boolean>(['use_default', 'use_expanded', 'use_bollywood', 'use_blockbuster'])
+            getRandomActor(datasetOptions).then(actor => props.setItem(props.title, actor));
         });
     }
 
     return <div className={`actor-container ${props.scale}`}>
-        {search ? null : <div className="title akkurat">{toTitleCase(props.title)}</div>}
+        {search ? null : <div className="slot-name akkurat">{props.title}</div>}
         {loading ? <LoadingContainer/> : (<>
-            {props.item ? <Background src={getProfileImage(props.item.image, 'lg')}/> :
-                <Background className='placeholder'/>}
-            {options ? <ActorSearch data={options} selected={selected} showProfile={props.showProfile}
+            {props.item ? <Background src={getProfileImage(props.item.image, 'lg')}/> : <Background className='placeholder'/>}
+            {options ? <ActorSearch data={options} selected={selected} showProfile={!disableProfile}
                                     onSelected={(index: number) => {
                                         props.setItem(props.title, options[index]);
                                         setOptions(null);
                                         setSearch(null);
                                     }}/> : null}
             <div style={{flexGrow: 1}}/>
-            <TitleBar actor={props.item}/>
-            <PopularityBar actor={props.item}/>
+            <ActorInfo actor={props.item} getString={props.getString}/>
             {props.item ? null : <SearchInput
-                placeholder={mobile ? "Star's Name" : "Enter a movie star's name"}
+                placeholder={mobile ? props.getString('container.enter_short') : props.getString('container.enter')}
                 onSubmit={onSearchSubmit}
                 onValue={onSearchValue}
                 changeSelected={changeSelected}
             />}
-            {props.item ? null : <ChooseForMe onClick={() => setRandomActor()}/>}
-            {props.item ? <ClearActor onClick={() => props.setItem(props.title, null)}/> : null}
+            {props.item ? null : <ChooseForMe title={props.getString('container.choose')} onClick={() => setRandomActor()}/>}
+            {props.item ? <ClearActor title={props.getString('container.clear')} onClick={() => props.setItem(props.title, null)}/> : null}
         </>)}
     </div>;
 

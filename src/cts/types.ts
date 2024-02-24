@@ -6,6 +6,13 @@ export type Dict<S> = {[key: string]: S};
 
 export type GameType = Actor | Film;
 
+export type Path = {
+    path: Array<Array<string>>
+    first: boolean
+    distance: number
+    hintsUsed: number
+}
+
 export type GameData = {
     mode: string
     subMode: string
@@ -13,8 +20,6 @@ export type GameData = {
     pool: Dict<GameType>
     altTitles: Dict<Array<string>>
     requires: Dict<string>
-    bestPath?: {
-        distance: number
-    }
+    bestPath?: Path
 }
 

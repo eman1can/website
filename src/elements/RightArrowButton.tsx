@@ -7,12 +7,14 @@ type RightArrowButtonProps = {
     onClick: () => void
     label: string
     scale: string
+    style?: object
 }
 
 const RightArrowButton = (props: Readonly<RightArrowButtonProps>) => {
     return (<Button
         className={`btn-solid ${props.scale}`}
         style={{
+            ...props.style,
             opacity: props.visible ? 1 : 0,
             pointerEvents: props.visible ? 'auto' : 'none'
         }}

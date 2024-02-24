@@ -49,7 +49,7 @@ export function getActor(query: { id: string }, credits?: boolean): Promise<Acto
 export function getFilm(query: { id: string }, credits?: boolean): Promise<Film> {
     const params: { api_key: string, append_to_response?: string } = {api_key: api_key};
     if (credits)
-        params.append_to_response = 'credits, keywords';
+        params.append_to_response = 'credits,keywords';
     return new Promise<Film>((resolve, reject) => {
         axios.get(`https://api.themoviedb.org/3/movie/${query.id.substring(1)}`, {
             params: params

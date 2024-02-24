@@ -1,9 +1,9 @@
 .modal-container {
-    position: relative;
+    position: absolute;
     left: 0;
     top: 0;
 
-    background: transparent;
+    backdrop-filter: blur(10px);
     z-index: 5;
 
     height: 100%;
@@ -23,20 +23,34 @@
 .modal {
     background-color: #14162e;
     color: #fff;
-    backdrop-filter: blur(6px);
 
     text-align: center;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: stretch;
+
+    overflow-x: hidden;
+    overflow-y: hidden;
 
     max-width: 768px;
-    padding: 0 25px;
-    /*max-height: 100%;*/
-    overflow-x: hidden;
-    overflow-y: auto;
-    gap: 20px;
+    min-width: 500px;
+    max-height: 80%;
+
+    flex-basis: 80%;
+    align-items: stretch;
+    justify-content: flex-start;
+
+    border: solid 1px white;
+    padding: 0 25px 25px 25px;
+}
+
+.modal.mobile {
+    max-height: 100%;
+    flex-basis: 100%;
+    min-width: 100%;
+}
+
+.modal-content {
+    margin: 25px;
 }
 
 .modal.sm {

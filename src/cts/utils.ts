@@ -1,4 +1,6 @@
 import slugify from "slugify";
+import React from "react";
+import { message } from "antd";
 
 export function isNormalInteger(s: string): boolean {
     const n = Math.floor(Number(s));
@@ -85,4 +87,24 @@ export function ObjectMap(obj: any, fn: (v: any, k: string, ix: number) => any) 
     return Object.fromEntries(
         Object.entries(obj).map(([k, v], ix) => [k, fn(v, k, ix)])
     )
+}
+
+export function downloadFile(data: string, filename: string, mimetype: string = 'application/json') {
+    const blob = new Blob([JSON.stringify(data)], {type: mimetype});
+    const elem = window.document.createElement('a');
+    elem.href = window.URL.createObjectURL(blob);
+    elem.download = filename;
+    document.body.appendChild(elem);
+    elem.click();
+    document.body.removeChild(elem);
+}
+
+export function showAlert(key: string, content: string | React.JSX.Element, icon: React.JSX.Element) {
+    message.destroy("copied");
+    message.success({
+        content: content,
+        className: "message game-message",
+        icon: icon,
+        key: key
+    }).then(() => {});
 }

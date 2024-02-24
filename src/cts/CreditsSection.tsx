@@ -1,18 +1,20 @@
 import { useState } from "react";
-import CreditsModal from "./CreditsModal";
+import CreditsModal from "./modals/CreditsModal";
 import Button from "../elements/Button";
 
 type CreditsSectionProps = {
     scale: string
+    getString: (key: string) => string
 }
 
-const CreditsSection = ({scale}: CreditsSectionProps) => {
+const CreditsSection = ({scale, getString}: CreditsSectionProps) => {
     const [showModal, setShowModal] = useState<boolean>(false);
     return (<div style={{
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyItems: 'center',
+        marginBottom: '25px'
     }}>
         {/*<div style={{*/}
         {/*    display: 'flex',*/}
@@ -56,7 +58,7 @@ const CreditsSection = ({scale}: CreditsSectionProps) => {
             alignItems: 'center',
             justifyItems: 'center',
         }}>
-            <Button scale={scale} onClick={() => setShowModal(true)}>— Credits —</Button>
+            <Button scale={scale} onClick={() => setShowModal(true)}>— {getString('lobby.credits')} —</Button>
         </div>
     </div>);
 }

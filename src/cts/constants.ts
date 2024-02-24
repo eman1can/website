@@ -4,8 +4,8 @@ export const CYTOSCAPE_STYLESHEET = [
         style: {
             "background-image": "data(image)",
             shape: "data(shape)",
-            height: 75,
-            width: 50,
+            height: 'mapData(importance, 1, 3, 75, 112.5)',
+            width: 'mapData(importance, 1, 3, 50, 75)',
             "background-fit": "cover",
             "border-color": "data(borderColor)",
             "background-color": "data(backgroundColor)",

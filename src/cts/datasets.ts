@@ -1,10 +1,10 @@
 import { find } from "../utils";
 import { Actor, Film } from "./api/types";
 
-const CONNECT_THE_STARS: Film = {id: 'f0', name: 'Connect The Stars', image: find('assets/cts', 'connect_the_stars.jpg'), popularity: 0, genres: []};
-const ERIC_BAI: Actor = {id: 'a0', name: 'Amanda Hum', image: find('assets/cts', 'amanda.jpg'), popularity: 0, credits: [CONNECT_THE_STARS], genres: []};
-const AMANDA_HUM: Actor = {id: 'a1', name: 'Amanda Hum', image: find('assets/cts', 'eric.jpg'), popularity: 0, credits: [CONNECT_THE_STARS], genres: []};
-const ETHAN_WOLFE: Actor = {id: 'a2', name: 'Ethan Wolfe', image: find('assets/cts', 'ethan.jpg'), popularity: 0, credits: [CONNECT_THE_STARS], genres: []};
+const CONNECT_THE_STARS: Film = {id: 'f0', name: 'Connect The Stars', image: find('assets/cts', 'connect_the_stars.jpg'), popularity: 0, genres: [], keywords: []};
+const ERIC_BAI: Actor = {id: 'a0', name: 'Amanda Hum', image: find('assets/cts', 'amanda.jpg'), popularity: 0, credits: [CONNECT_THE_STARS], genres: [], keywords: []};
+const AMANDA_HUM: Actor = {id: 'a1', name: 'Amanda Hum', image: find('assets/cts', 'eric.jpg'), popularity: 0, credits: [CONNECT_THE_STARS], genres: [], keywords: []};
+const ETHAN_WOLFE: Actor = {id: 'a2', name: 'Ethan Wolfe', image: find('assets/cts', 'ethan.jpg'), popularity: 0, credits: [CONNECT_THE_STARS], genres: [], keywords: []};
 
 export const SecretActors: Actor[] = [ERIC_BAI, AMANDA_HUM, ETHAN_WOLFE];
 
@@ -386,18 +386,8 @@ export const PRE_BLOCKBUSTER_IDS: number[] = [
 ];
 
 export const Datasets: {[key: string]: number[]} = {
-    default: ACTOR_IDS,
-    expanded: EXPANDED_ACTOR_IDS,
-    bollywood: BOLLYWOOD_ACTOR_IDS,
-    blockbuster: PRE_BLOCKBUSTER_IDS
-}
-
-export const getDataset = (options: {[key: string]: any}): number[] => {
-    let keys: number[] = [];
-    for (const key of Object.keys(Datasets)) {
-        if (options[`use_${key}`]) {
-            keys = keys.concat(Datasets[key]);
-        }
-    }
-    return keys;
+    use_default: ACTOR_IDS,
+    use_expanded: EXPANDED_ACTOR_IDS,
+    use_bollywood: BOLLYWOOD_ACTOR_IDS,
+    use_blockbuster: PRE_BLOCKBUSTER_IDS
 }

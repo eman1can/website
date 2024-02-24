@@ -5,6 +5,7 @@ export type Actor = {
     popularity: number
     credits?: Array<Film>
     genres: Array<number>
+    keywords: Array<string>
 }
 
 export type Film = {
@@ -14,6 +15,7 @@ export type Film = {
     popularity: number
     credits?: Array<Actor>
     genres: Array<number>
+    keywords: Array<string>
 }
 
 export type AlternativeTitles = {

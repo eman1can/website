@@ -1,12 +1,12 @@
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import cytoscape, {CollectionReturnValue, NodeCollection, NodeSingular} from "cytoscape";
+import cytoscape, { CollectionReturnValue, NodeCollection, NodeSingular } from "cytoscape";
 import d3Force from "cytoscape-d3-force";
 
 import CytoscapeComponent from "react-cytoscapejs";
 import React, { useEffect, useRef, useState } from "react";
 import { CYTOSCAPE_STYLESHEET } from "./constants";
 import { getRandomItemFromArray, toGraphKey, numToWords, numToWordGuess, ObjectMap } from "./utils";
-import { Dict, GameData, GameType } from "./types";
+import { Dict, GameData, GameType, Path } from "./types";
 import { Actor, AlternativeTitles, Film } from "./api/types";
 import { getProfileImage, getData as apiGetData } from "./api/tmdb";
 import DynamicButton from "../elements/DynamicButton";
@@ -19,9 +19,10 @@ import GuideText from "./GuideText";
 import EnterIcon from "../elements/EnterIcon";
 import HowToPlayButton from "../elements/HowToPlayButton";
 import FuzzySet from "fuzzyset";
-import {ModalProps} from "../elements/Modal";
-import getHowToPlayModal from "./HowToPlayModal";
-import {getSuccessModal} from "../elements/SuccessModal";
+import { ModalProps } from "../elements/Modal";
+import LogoHeader from "../elements/LogoHeader";
+import useLocalStorage from "./local_storage";
+import { useLocation } from "react-router-dom";
 
 cytoscape.use(d3Force);
 
@@ -63,6 +64,7 @@ type Node = {
         backgroundColor: string,
         borderWidth: number
         opacity: number,
+        importance?: number,
     } | {
         source: string,
         target: string,
@@ -79,40 +81,10 @@ type NodeData = {
     neighbour_ids: Array<string>
 }
 
-const LogoHeader = () => {
-    return (<div style={{
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginTop: '15px'
-    }}>
-        <Unselectable style={{padding: 0}}>
-            <img
-                className="unselectable"
-                src={find('assets/cts', 'logo.png')}
-                alt="Logo"
-                style={{width: 56}}
-            />
-        </Unselectable>
-        <Unselectable style={{padding: 0}}>
-            <h1
-                className="unselectable"
-                style={{
-                    color: "#fff",
-                    marginBottom: 0,
-                    marginLeft: '12px'
-                }}
-            >
-                Connect the Stars
-            </h1>
-        </Unselectable>
-    </div>);
-}
-
 type InstructionTitleProps = {
+    mode: string
     mobile: boolean
-    actors: Array<{id: string, name: string}>
+    actors: Array<{ id: string, name: string }>
     onClick: (key: string) => void
 }
 
@@ -128,31 +100,56 @@ const InstructionHeader = (props: Readonly<InstructionTitleProps>) => {
             <Unselectable className="game-header-text">
                 {props.mobile ? 'Connect' : 'Can you connect'}
             </Unselectable>
-            {props.actors.map((item, ix) => {
-                return <div key={item.id}>
+
+            {props.mode === 'detour' ? (
+                <>
                     <button
                         className="game-header-link"
-                        onClick={() => props.onClick(item.id)}
+                        onClick={() => props.onClick(props.actors[0].id)}
                     >
-                        {item.name}
+                        {props.actors[0].name}
                     </button>
-                    {ix < props.actors.length - 2 ?
-                        <Unselectable className="game-header-text">{', '}</Unselectable> : null}
-                    {ix < props.actors.length - 1 ?
-                        <Unselectable className="game-header-text">{' and '}</Unselectable> : null}
-                </div>
-            })}
-            {props.mobile ? null : (<Unselectable className="game-header-text">
-                ?
-            </Unselectable>)}
-
+                    <Unselectable className="game-header-text"> to </Unselectable>
+                    <button
+                        className="game-header-link"
+                        onClick={() => props.onClick(props.actors[2].id)}
+                    >
+                        {props.actors[2].name}
+                    </button>
+                    <Unselectable className="game-header-text"> through </Unselectable>
+                    <button
+                        className="game-header-link"
+                        onClick={() => props.onClick(props.actors[1].id)}
+                    >
+                        {props.actors[1].name}
+                    </button>
+                </>
+            ) : (<>{
+                props.actors.map((item, ix) => {
+                    return <>
+                        <button
+                            className="game-header-link"
+                            onClick={() => props.onClick(item.id)}
+                            style={{paddingInlineEnd: '0'}}
+                        >
+                            {item.name}
+                        </button>
+                        {props.actors.length > 2 && ix <= props.actors.length - 2 ?
+                            <Unselectable className="game-header-text"
+                                          style={{paddingInlineStart: '0'}}>{', '}</Unselectable> : null}
+                        {ix == props.actors.length - 2 ?
+                            <Unselectable className="game-header-text">{' and '}</Unselectable> : null}
+                    </>
+                })
+            }</>)}
+            {props.mobile ? null : (
+                <Unselectable className="game-header-text" style={{paddingInlineStart: '0'}}>?</Unselectable>)}
         </h3>
     </div>)
 }
 
 type CytoscapeProps = {
     scale: string
-    data: GameData
     setModalContent: (newContent: ModalProps | null) => void
     returnToLobby: () => void
 }
@@ -160,10 +157,14 @@ type CytoscapeProps = {
 const Cytoscape = (props: Readonly<CytoscapeProps>) => {
     const mobile = props.scale.startsWith('mobile');
 
-    const [found, setFound] = useState<Array<string>>(props.data.found);
-    const [answers, setAnswers] = useState<Dict<GameType>>(props.data.pool);
-    const [alternativeTitles, setAlternativeTitles] = useState<Dict<Array<string>>>(props.data.altTitles);
-    const [bestPath, setBestPath] = useState<{distance: number, path: Array<GameType>} | null>(null);
+    const [data, setData] = useLocalStorage<GameData>('game_data', {found: [], pool: {}, altTitles: {}, mode: '', subMode: '', requires: {}});
+
+    const {pathname, search} = useLocation();
+
+    const [found, setFound] = useState<Array<string>>(data.found);
+    const [answers, setAnswers] = useState<Dict<GameType>>(data.pool);
+    const [alternativeTitles, setAlternativeTitles] = useState<Dict<Array<string>>>(data.altTitles);
+    const [bestPath, setBestPath] = useState<Path | undefined>(undefined);
 
     const [selectedNode, setSelectedNode] = useState<{ id: string, key: string } | null>(null);
     // const [hints, setHints] = useState<Map<string, string>>(new Map());
@@ -215,67 +216,189 @@ const Cytoscape = (props: Readonly<CytoscapeProps>) => {
         };
     });
 
+    function dijkstra(): [number, string[][] | null] {
+        if (!cyRef.current)
+            return [Infinity, null];
+
+        type NodeInfo = { visited: boolean, distance: number, neighbors: Array<string>, name: string};
+
+        const nodes: Dict<NodeInfo> = cyRef.current.nodes().reduce((d, n) => ({
+            ...d, [n.id()]: {
+                visited: false,
+                distance: Infinity,
+                name: n.data('label'),
+                neighbors: n.neighborhood().filter(n => n.isNode()).map(n => n.id())
+            }
+        }), {});
+        let required = Object.values(data.requires).reverse();
+
+        // console.log('Required', required);
+        // console.log('Nodes', nodes);
+
+        // Start the algorithm at the first node
+        let currentId = required.pop();
+        if (!currentId)
+            return [Infinity, null];
+
+        // Set the distance of the starting required node to 0 and mark it as visited
+        let current = nodes[currentId];
+        nodes[currentId].distance = 0;
+
+        // console.log(`Starting at node ${currentId} (${nodes[currentId].name})`);
+
+        let currentDistance = 1;
+        while (required.length > 0) {
+            for (const id of current.neighbors) {
+                // console.log(`Check Neighbor ${id} (${nodes[id].name})`);
+
+                // If this neighbor is visited; skip
+                if (nodes[id].visited)
+                    continue;
+
+                // We have no self-loops
+
+                // Calculate New Distance For this Neighbor
+                const d = nodes[id].distance;
+                if (currentDistance < d) {
+                    nodes[id].distance = currentDistance;
+                    // console.log(`Found better path ${currentDistance} ${currentId} (${nodes[currentId].name}) → ${id} (${nodes[id].name})`);
+                }
+
+                // Mark any nodes that only have one neighbor (AKA current) as visited
+                if (nodes[id].neighbors.length === 1)
+                    nodes[id].visited = true;
+
+                // If this neighbor is a required node, remove it from the required list
+                const rix = required.indexOf(id);
+                if (rix > -1) {
+                    // console.log(`Found Required ${id} (${nodes[id].name}) at ${currentDistance}`);
+                    required.splice(rix, 1);
+                }
+            }
+
+            // Don't move to next node if we found all
+            if (required.length === 0) {
+                // console.log('Found all required nodes');
+                break;
+            }
+
+            // Mark this node as visited
+            nodes[currentId].visited = true;
+
+            // Move to the lowest unvisited node
+            let lowest: number = Infinity;
+            for (const [id, n] of Object.entries(nodes)) {
+                if (n.visited)
+                    continue;
+
+                if (n.distance < lowest) {
+                    currentId = id;
+                    lowest = n.distance;
+                }
+            }
+
+            // If we can't find a path, return Infinity
+            if (lowest === Infinity) {
+                // console.log('Could not find a unvisited node within tree');
+                return [Infinity, null];
+            }
+
+            // Query the next current node
+            // console.log(`Moving to ${currentId} (${nodes[currentId].name})`);
+            current = nodes[currentId];
+            currentDistance = current.distance + 1;
+        }
+
+        // console.log('Found all required nodes');
+        required = Object.values(data.requires);
+
+        const paths: string[][] = [];
+        let totalDistance: number = 0;
+        for (const id of required.slice(1)) {
+            current = nodes[id];
+            currentId = id;
+            const path: string[] = [];
+
+            // console.log(`Start tracing from ${currentId} (${nodes[currentId].name})`);
+            while (currentId != required[0]) {
+                if (path.includes(currentId))
+                    break;
+                path.push(currentId);
+
+                let lowest: number = Infinity;
+                for (const n of current.neighbors) {
+                    if (nodes[n].distance < lowest) {
+                        lowest = nodes[n].distance;
+                        currentId = n;
+                    }
+                }
+
+                current = nodes[currentId];
+                // console.log(`Move to ${currentId} (${nodes[currentId].name})`);
+            }
+
+            // Add the "End" node to path
+            path.push(currentId);
+
+            // console.log('Push path', path);
+            paths.push(path.reverse());
+            totalDistance += path.length;
+        }
+
+        totalDistance -= paths.length;
+
+        return [totalDistance, paths];
+    }
+
     function checkSuccess() {
         if (!cyRef.current)
             return;
 
-        let distance = Infinity;
-        let path = null;
-        if (props.data.mode === 'detour') {
-            const start = cyRef.current.getElementById(`#${props.data.requires.one}`);
-            const detour = cyRef.current.getElementById(`#${props.data.requires.detour}`);
-            const end = cyRef.current.getElementById(`#${props.data.requires.two}`);
+        const [distance, paths] = dijkstra();
+        console.log('Dijkstra', distance, paths);
 
-            const dijkstra = cyRef.current.elements().dijkstra({root: start});
-
-            distance = dijkstra.distanceTo(end);
-            path = dijkstra.pathTo(end);
-
-            if (distance !== Infinity && !path.intersection(detour)) {
-                distance = Infinity;
-                path = null;
-            }
-        } else {
-            const nodes = Object.values(props.data.requires).map(k => cyRef.current?.$(`#${k}`));
-
-            const dijkstra = cyRef.current.elements().dijkstra({root: nodes[1]});
-            distance = dijkstra.distanceTo(end);
-            path = dijkstra.pathTo(end);
-
-            if (distance !== Infinity) {
-                console.log(`Path from ${props.data.requires.one} to ${props.data.requires.two} is ${distance}`);
-            } else {
-                console.log(`No path from ${props.data.requires.one} to ${props.data.requires.two}`);
-            }
-        }
-
-        if (distance !== Infinity && path != null) {
+        if (distance !== Infinity && paths !== null) {
             if (bestPath == null || distance < bestPath.distance) {
-                const newBestPath = path.map(n => answers[n.id()]).filter(o => o);
-                setBestPath({path: newBestPath, distance: distance});
-                /// hide selection
+                const newBestPath = {path: paths, distance: distance, first: !bestPath, hintsUsed: 0};
+                setBestPath(newBestPath);
+                setData({...data, bestPath: newBestPath});
+
+                handleUnselectedNode();
                 props.setModalContent({
-                    ...props,
-                    children: getSuccessModal({
-                        ...props,
-                        path: newBestPath,
-                        hintsUsed: 0,
-                        keywords: {},
-                        confetti: true
-                    }),
-                    onSuccess: () => props.returnToLobby(),
+                    scale: '',
+                    getString: s => s,
+                    modalName: 'cts_Success',
+                    onSuccess: () => {
+                        localStorage.setItem('game_data', 'null');
+                        const params = new URLSearchParams(search);
+                        for (const k in params.keys())
+                            params.delete(k)
+                        props.returnToLobby();
+                        props.setModalContent(null);
+                    },
                     onCancel: () => props.setModalContent(null),
                     success: 'New Game',
                     cancel: 'Continue'
                 });
+
+                // Reset all edges
                 cyRef.current.$('edge').data('width', 1).data('lineColor', '#fff');
-                for (let ix = 1; ix < path.length; ix += 2) {
-                    const edgeOnBestPath = path[ix].id();
-                    cyRef.current?.getElementById(edgeOnBestPath).data('width', 5).data('lineColor', '#BCA356');
+                // Rest all nodes
+                cyRef.current.$('node').data('importance', 1).data('borderColor', '#fff');
+
+                for (const path of paths) {
+                    for (const nodeId of path) {
+                        if (!nodeId)
+                            continue;
+                        const node = cyRef.current.getElementById(nodeId);
+                        node.data('importance', Object.values(data.requires).includes(nodeId) ? 3 : 2).data('borderColor', '#BCA356');
+                        for (const edge of node.neighborhood().filter(n => n.isEdge()).toArray()) {
+                            if (path.includes(edge.data('source')) && path.includes(edge.data('target'))) {
+                                edge.data('width', 5).data('lineColor', '#BCA356');
+                            }
+                        }
+                    }
                 }
-                // for (const [key, value] of Object.entries(hintsUsed)) {
-                //    TODO: Add hint coloring
-                // }
             }
         }
     }
@@ -342,20 +465,34 @@ const Cytoscape = (props: Readonly<CytoscapeProps>) => {
             }
         }
 
+        const required = Object.values(data.requires);
+        let onPath: string[] = [];
+        if (bestPath)
+            onPath = bestPath.path.flat();
+
         for (const nodeId of found) {
             const item = answers[nodeId];
+
+            let importance = 1;
+            const inPath = onPath.includes(nodeId);
+            if (inPath)
+                importance = 2;
+            if (required.includes(nodeId))
+                importance = 3;
+
             const element: Node = {
                 data: {
-                    id: item.id,
+                    id: nodeId,
                     label: item.name,
                     image: getProfileImage(item.image, mobile ? 'sm' : 'md'),
                     shape: "rectangle",
-                    borderColor: "#fff",
-                    backgroundColor: "#fff",
+                    borderColor: inPath ? '#BCA356' : '#fff',
+                    backgroundColor: '#fff',
                     opacity: 1,
-                    borderWidth: 1
+                    borderWidth: 1,
+                    importance: importance
                 },
-                selected: !!(selectedNode && item.id === selectedNode.id)
+                selected: !!(selectedNode && nodeId === selectedNode.id)
             };
             if (newNode?.id.startsWith('a') && newNode?.id === item.id) {
                 element.position = {x: newX, y: newY};
@@ -363,14 +500,15 @@ const Cytoscape = (props: Readonly<CytoscapeProps>) => {
             if (nodeId.startsWith('a')) {
                 item.credits?.forEach(c => {
                     if (found.includes(c.id)) {
+                        const edgeInPath = inPath && onPath.includes(c.id);
                         elements.push({
                             data: {
-                                id: `${item.id}-${c.id}`,
-                                source: item.id,
+                                id: `${nodeId}-${c.id}`,
+                                source: nodeId,
                                 target: c.id,
                                 label: '',
-                                lineColor: '#fff',
-                                width: 1
+                                lineColor: edgeInPath ? '#BCA356' : '#fff',
+                                width: edgeInPath ? 5 : 1
                             }
                         });
                     }
@@ -389,6 +527,8 @@ const Cytoscape = (props: Readonly<CytoscapeProps>) => {
     const handleSelectedNode = () => {
         if (cyRef.current) {
             const selected = cyRef.current.$("node:selected");
+            if (selected.length === 0)
+                return;
             const nodeKey = nodeToKey(selected);
             setSelectedNode(nodeKey);
         }
@@ -421,13 +561,7 @@ const Cytoscape = (props: Readonly<CytoscapeProps>) => {
     }
 
     function saveToStorage() {
-        const data = props.data;
-        data.found = found;
-        data.pool = answers;
-        if (bestPath) {
-            data.bestPath = bestPath;
-        }
-        localStorage.setItem('game_data', JSON.stringify(data));
+        setData({...data, found: found, pool: answers, bestPath: bestPath});
     }
 
     function addNode(nodeId: string) {
@@ -534,10 +668,10 @@ const Cytoscape = (props: Readonly<CytoscapeProps>) => {
 
     const howToPlayContent = {
         scale: '',
-        children: getHowToPlayModal(),
+        modalName: 'cts_HowToPlay',
+        getString: (s: string) => s,
         onCancel: () => props.setModalContent(null),
-        onSuccess: () => {
-        },
+        onSuccess: () => {},
         showClose: true
     };
 
@@ -553,7 +687,8 @@ const Cytoscape = (props: Readonly<CytoscapeProps>) => {
             />}
         </div>
         <div style={{position: "absolute", top: 18, right: 18, zIndex: 2}}>
-            {<HowToPlayButton mobile={false} showIcon={mobile} onClick={() => props.setModalContent(howToPlayContent)}/>}
+            {<HowToPlayButton mobile={false} showIcon={mobile}
+                              onClick={() => props.setModalContent(howToPlayContent)}/>}
         </div>
         {mobile ? null : (<div style={{position: 'absolute', top: 125, left: 18, zIndex: 2}}>
             {selectedNode && (
@@ -567,10 +702,11 @@ const Cytoscape = (props: Readonly<CytoscapeProps>) => {
             )}
         </div>)}
         <div style={{height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'stretch'}}>
-            {mobile ? null : <LogoHeader/>}
+            {mobile ? null : <LogoHeader title="Connect the Stars"/>}
             <InstructionHeader
                 mobile={mobile}
-                actors={Object.values(props.data.requires).map(k => answers[k])}
+                mode={data.mode}
+                actors={Object.values(data.requires).map(k => answers[k])}
                 onClick={key => setSelectedNodeFromOutsideGraph(key)}
             />
             <div style={{flexGrow: 1, display: 'flex', flexDirection: 'column'}}>
@@ -700,16 +836,16 @@ const Cytoscape = (props: Readonly<CytoscapeProps>) => {
                     <div className='stat'>
                         Best Path: {bestPath ? bestPath.distance : '???'}
                         {bestPath ? (<Button onClick={() => props.setModalContent({
-                            ...props,
-                            children: getSuccessModal({
-                                ...props,
-                                path: bestPath.path,
-                                hintsUsed: 0,
-                                confetti: false,
-                                keywords: {}
-                            }),
-                            onSuccess: () => {},
-                            onCancel: () => props.setModalContent(null)
+                            scale: '',
+                            modalName: 'cts_Success',
+                            getString: (s: string) => s,
+                            onSuccess: () => {
+                                props.returnToLobby();
+                                props.setModalContent(null);
+                            },
+                            onCancel: () => props.setModalContent(null),
+                            success: 'Lobby',
+                            cancel: 'Continue'
                         })}>?</Button>) : null}
                     </div>
                 </div>

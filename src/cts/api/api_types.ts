@@ -122,7 +122,10 @@ export type ApiFilm = {
         crew: Array<ActorCrew>
     }
     keywords?: {
-        keywords: Array<string>
+        keywords: Array<{
+            id: number,
+            name: string
+        }>
     }
 }
 
