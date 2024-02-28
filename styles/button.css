@@ -21,8 +21,9 @@
 }
 
 .lg .btn {
-    font-size: 16pt;
-    height: 40px;
+    font-size: 14pt;
+    min-height: 40px;
+    padding: 0 20px;
     min-width: 40px;
 }
 
